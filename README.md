@@ -57,13 +57,10 @@ Acesse a url http://127.0.0.1:8888/lab?token=9675434... para acessar o Jupyter N
     execute para remover os volumes e imagens do docker:
 
 ```
-`docker-compose down -v --rmi all`
+docker-compose down -v --rmi all
 ```
 
-
-
 ---
-
 
 ## Conclusão
 
