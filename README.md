@@ -4,7 +4,6 @@
 
 O desafio é desenvolver um programa em Python capaz de acessar e extrair informações de um website específico, organizando-as de forma eficaz.
 
-
 *! Importante ressaltar que o uso do Selenium* ou bibliotecas similares** não é permitido.
 
 **Critérios de Avaliação:**
@@ -27,8 +26,6 @@ Publicação: O código finalizado deve ser publicado em um repositório GitHub,
 * Selenium é uma ferramenta que permite controlar um navegador web pelo computador. Funciona em diferentes navegadores e sistemas operacionais, e pode ser usado com várias linguagens de programação, como Python. Geralmente é usado para testar aplicativos web automaticamente, mas também ajuda a coletar dados de sites quando não há APIs disponíveis.
 * Qualquer biblioteca que permita o controle do navegador do usuário.
 
-
-
 ---
 
 ## Da pesquisa
@@ -42,8 +39,6 @@ Devido à restrição de não utilização da biblioteca Selenium e outras semel
 Sendo assim, aproveitei a oportunidade para realizar uma análise comparativa entre BeautifulSoup e Scrapy para web scraping. Um exemplo de sintaxe e desempenho encontra-se em `./PoC_Scripts_Jupyter/src/` <<< [Veja mais](./PoC_Scripts_Jupyter/) >>> .
 
 ---
-
-
 
 # `<center>` Do Desafio - Script Jupyter Noteboo `</center>`
 
@@ -61,13 +56,16 @@ Sendo assim, aproveitei a oportunidade para realizar uma análise comparativa en
 
 ```
 $ git clone .https://github.com/edcastanha/scraping_api
-$ cd Poc_Scripts_Jupyter/
+# >>> Cloning into 'desafio-web-scraping'...
+$ cd desafio-web-scraping/Poc_Scripts_Jupyter/
 $ docker-compose up
 ```
 
 Acessando o Jupyter Notebook >>> http://127.0.0.1:8888/lab?token=9675434...
 
 ![1702841871677](image/README/1702841871677.png)
+
+Abra pasta `src/` e execute o scrypt `esolucao_desafio.ipynb` (preencha  url e codigo com informacoes validas)
 
 ## ***`<center>`! LEMBRETE ! `</center>`***
 
