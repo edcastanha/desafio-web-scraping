@@ -1,27 +1,18 @@
-# PoC Web Scraping
-
-## EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB
+# PoC Web Scraping - EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB
 
 `<b>`Descrição:`</b>` O desafio é desenvolver um programa em Python capaz de acessar e extrair informações de um website específico, organizando-as de forma eficaz.
-
 *! Importante ressaltar que o uso do Selenium* ou bibliotecas similares** não é permitido.
 
 `<b>`Critérios de Avaliação:`</b>`
-
  Organização dos Dados: A maneira como os dados são estruturados e armazenados para fácil acesso e manipulação.
-
  Lógica de Programação: A clareza, eficiência e eficácia da lógica empregada para acessar, extrair e organizar os dados.
-
  Leitura de Arquivos: A habilidade em lidar com a leitura dos arquivos disponibilizados no website, bem como a interpretação correta dos dados contidos neles.
-
  Download de Arquivos: A implementação de uma solução robusta para o download dos arquivos disponíveis, garantindo a integridade dos dados.
 
 Website Alvo: https://site_alvo.com.br
-
 Códigos de Acesso: 123456, 12345
 
 Após a inserção dos códigos, o candidato obterá acesso aos arquivos relevantes que deverão ser processados.
-
 Publicação: O código finalizado deve ser publicado em um repositório GitHub, com um README explicativo.
 
 `<b>`Observações:`</b>`
@@ -49,14 +40,33 @@ Sendo assim, aproveitei a oportunidade para realizar uma análise comparativa en
 
 * imagen final com tamanho de 876.19 MB baseada na [imagen docker-stacks-foundation](https://github.com/jupyter/docker-stacks/tree/main/images/docker-stacks-foundation)
 
-### Execução - via Container Docker
+## Execução - via Container Docker
 
 ```
-
 $ git clone .https://github.com/edcastanha/scraping_api
-
 $ cd Poc_Scripts_Jupyter/
-
 $ docker-compose up
+```
+
+Acesse a url http://127.0.0.1:8888/lab?token=9675434... para acessar o Jupyter Notebook
+
+![Saida do conselo - Link para Jupyter Server](./PoC_Scripts_Jupyter/screenshot_logs_docker.png/)
+
+***! LEMBRETE !***
+
+    execute para remover os volumes e imagens do docker:
 
 ```
+`docker-compose down -v --rmi all`
+```
+
+
+
+---
+
+
+## Conclusão
+
+Considerando meu entendimento em relação à interpretação das descrições das ferramentas BeautifulSoup e Scrapy, e devido à não identificação de quebra de requisito em relação ao uso do Selenium e similares, optei por não arriscar a utilização da biblioteca BeautifulSoup para a análise e desenvolvimento da PoC.
+
+Além disso, durante a análise para a realização do web scraping no contexto do desafio, identifiquei que este envolve a extração de dados de páginas que utilizam Single Page Application (SPA). Nessas circunstâncias, observei que a URL apresenta comportamentos distintos ao ser acessada via métodos GET e POST. Esta peculiaridade aumenta a complexidade do scraping e sugere a necessidade de uma abordagem específica para lidar com essas diferenças de comportamento, o que pode impactar a escolha da ferramenta mais adequada para o projeto. No entanto, ao notar essa característica, percebi que facilitou a elaboração da lógica e escolha da infraestrutura para a PoC_API e fluxos dos dados.
