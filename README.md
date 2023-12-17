@@ -63,11 +63,13 @@ $ docker-compose up
 
 Acessando o Jupyter Notebook >>> http://127.0.0.1:8888/lab?token=9675434...
 
-![1702841871677](image/README/1702841871677.png)
+![1702841871677](image/README/1702841871677.png "Logs Docker")
 
-Abra pasta `src/` e execute o scrypt `esolucao_desafio.ipynb` (preencha  url e codigo com informacoes validas)
+Abra pasta `src/` e execute o scrypt `resolucao_desafio.ipynb` (preencha  url e codigo com informacoes validas)
 
-## ***`<center>`! LEMBRETE ! `</center>`***
+![Tela Jupyter Notebook](image\README\1702850082562.png "Exec Run Cell")
+
+***`<center>`! LEMBRETE ! `</center>`***
 
  **execute para remover os volumes e imagens do docker:**
 
