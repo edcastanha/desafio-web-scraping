@@ -15,7 +15,7 @@ O desafio é desenvolver um programa em Python capaz de acessar e extrair inform
  Download de Arquivos: A implementação de uma solução robusta para o download dos arquivos disponíveis, garantindo a integridade dos dados.
 
 * *Website Alvo:*
-  url = https://site_alvo.com.br
+  url = site_alvo.com.br
 * *Códigos de Acesso:*
   codigo = 123456
 
