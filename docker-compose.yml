@@ -1,0 +1,21 @@
+
+version: "3.8"
+
+services: 
+  jupyter:
+    container_name: jupyter
+    build: .
+    ports: 
+      - "8888:8888"
+    environment: 
+      - JUPYTER_ENABLE_LAB=yes
+    volumes: 
+      - ./src:/home/jovyan/work/src # Compartilamento de volume para o diretório src
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 512M  # Reserva mínima de memória para 256 MB
