@@ -50,11 +50,11 @@ $ docker-compose up
 
 Acesse a url http://127.0.0.1:8888/lab?token=9675434... para acessar o Jupyter Notebook
 
-![Saida do conselo - Link para Jupyter Server](./PoC_Scripts_Jupyter/screenshot_logs_docker.png/)
+![1702841871677](image/README/1702841871677.png)
 
-***! LEMBRETE !***
+## ***`<center>`! LEMBRETE ! `</center>`***
 
-    execute para remover os volumes e imagens do docker:
+ **execute para remover os volumes e imagens do docker:**
 
 ```
 docker-compose down -v --rmi all
@@ -64,6 +64,6 @@ docker-compose down -v --rmi all
 
 ## Conclusão
 
-Considerando meu entendimento em relação à interpretação das descrições das ferramentas BeautifulSoup e Scrapy, e devido à não identificação de quebra de requisito em relação ao uso do Selenium e similares, optei por não arriscar a utilização da biblioteca BeautifulSoup para a análise e desenvolvimento da PoC.
+Considerando o entendimento em relação à interpretação das descrições das ferramentas BeautifulSoup e Scrapy, e devido à não identificação de quebra de requisito em relação ao uso do Selenium e similares, optei por não arriscar a utilização da biblioteca BeautifulSoup para a análise e desenvolvimento da PoC.
 
 Além disso, durante a análise para a realização do web scraping no contexto do desafio, identifiquei que este envolve a extração de dados de páginas que utilizam Single Page Application (SPA). Nessas circunstâncias, observei que a URL apresenta comportamentos distintos ao ser acessada via métodos GET e POST. Esta peculiaridade aumenta a complexidade do scraping e sugere a necessidade de uma abordagem específica para lidar com essas diferenças de comportamento, o que pode impactar a escolha da ferramenta mais adequada para o projeto. No entanto, ao notar essa característica, percebi que facilitou a elaboração da lógica e escolha da infraestrutura para a PoC_API e fluxos dos dados.
