@@ -1,4 +1,5 @@
 FROM quay.io/jupyter/base-notebook
+#FROM quay.io/jupyter/docker-stacks-foundation
 # Impede o Python de escrever ficheiros pyc para o disco (equivalente à opção python -B)
 ENV PYTHONDONTWRITEBYTECODE 1
 # assegura que a saída Python é enviada diretamente para o terminal sem a colocar em buffer primeiro
