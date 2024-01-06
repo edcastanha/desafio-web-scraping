@@ -1,16 +1,123 @@
 
 version: "3.8"
 
-services: 
-  api:
-    container_name: api
-    build: .
+services:
+
+  # RabbitMQ - Filas
+  broker-server:
+    image: rabbitmq:3-management
+    container_name: broker-server
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=fake
+      - RABBITMQ_DEFAULT_PASS=fake123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "25676:25676"
+    networks:
+      - server-hosts
+  
+  # Postgres - System Database 
+  postgres-server:
+    image: postgres:alpine3.18
+    container_name: postgres-server
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=clientDB
+      - POSTGRES_PASSWORD=fake123
+    volumes:
+      - 'postgres_data:/var/lib/postgresql/data'
+    ports:
+      - 5432:5432
+    networks:
+      - server-hosts
+  
+ # Django - System Admin / API REST 
+  django-server:
+    build:
+      context: django-server
+      dockerfile: Dockerfile
+    container_name: django-server
+    command: gunicorn --workers=2 --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
+    depends_on:
+      - postgres-server
+    restart: always
+    ports:
+      - "5005:5005"
+    volumes:
+      - ./django-server:/app
+      - logs_data:/app/media/logs/
+      - ./stasfiles:/app/staticfiles/
+    networks:
+      - server-hosts
+      - web_network
+
+  nginx-server:
+      container_name: nginx-server
+      restart: always
+      image: "nginx:latest"
+      ports:
+        - "7000:7000"
+      volumes:
+        - ./nginx:/etc/nginx/conf.d
+        - ./stasfiles:/api/staticfiles/
+      networks:
+        - web_network
+      depends_on:
+        - django-server
+
+# Celery - System Task Manager
+  beat-scheduler:
+    build:
+      context: django-server
+      dockerfile: Dockerfile
+    command: celery -A core beat --loglevel=INFO --logfile=/api/media/logs/celery-beat.log --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    depends_on:
+      - postgres-server
+      - broker-server
+    restart: always
+    volumes:
+      - ftp_data:/api/media/ftp/
+      - logs_data:/api/media/logs/
+    networks:
+      - server-hosts
+
+# Celery - System Task Worker
+  tasks-workers:
+    build:
+      context: django-server
+      dockerfile: Dockerfile
+    command: celery -A core worker --loglevel=INFO --logfile=/api/media/logs/celery-worker.log
+    depends_on:
+      - postgres-server
+      - broker-server
+    restart: always
+    volumes:
+      - ftp_data:/api/media/ftp/
+      - logs_data:/api/media/logs/
+    networks:
+      - server-hosts
+
+  flask-app:
+    container_name: flask-app
+    build:
+      context: flask-server
+      dockerfile: Dockerfile
     ports: 
-      - "8000:80"
+      - "3000:80"
     environment: 
       - MYSQL_HOST = mysql
     volumes: 
-      - ./src:/home/api # Compartilamento de volume para o diretório src
+      - ./flask-server:/api # Compartilamento de volume para o diretório src
     deploy:
       resources:
         limits:
@@ -19,14 +126,38 @@ services:
         reservations:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
           memory: 512M  # Reserva mínima de memória para 256 MB
-  localstack:
-    image: localstack/localstack:latest
-    environment:
-      - AWS_DEFAULT_REGION=sa-east-1
-      - EDGE_PORT+4566
-      - SERVICES=s3,lambda
-    ports:
-      - '4566:4566'
-    volumes:
-      - "${TEMDIR:-/tmp/localstack}:/tmp/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+
+networks:
+  server-hosts:
+    driver: bridge
+  web_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/postgres
+
+  rabbitmq_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/rabbitmq
+
+  logs_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/logs
+
+  ftp_data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./volumes/ftp

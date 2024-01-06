@@ -45,6 +45,53 @@ $ cd desafio-web-scraping/Poc_Api_Rest_Docker/
 $ docker-compose up
 ```
 
+### Arquitetura Geral:
+
+1. **Servidor Django:**
+   * Será responsável pela definição dos modelos de dados do cliente, URLs e configurações relacionadas.
+2. **API Flask:**
+   * Oferecerá endpoints para interação com o sistema, permitindo que os clientes sejam cadastrados, URLs sejam associadas a tarefas e configurações sejam gerenciadas.
+3. **Celery com RabbitMQ:**
+   * O Celery será usado para a gestão de tarefas assíncronas. RabbitMQ será o broker de mensagens para orquestrar as filas.
+
+Aqui está uma descrição detalhada de cada componente:
+
+1. Servidor Django:
+
+* **Modelos de Dados:**
+  * Criará modelos de dados para clientes, URLs e configurações de tarefas.
+  * Exemplo:
+    * Modelo Cliente: Nome, Email, etc.
+    * Modelo Alvo: URL, CODIGO, Descrição, etc.
+    * Modelo Tarefa: Tipo (diária, semanal, quinzenal, mensal), Parâmetros, Cliente Associado, Alvo Associada, etc.
+* **Administração de Clientes:**
+  * Fornecerá funcionalidades CRUD (Criar, Ler, Atualizar, Deletar) para gerenciar informações dos clientes.
+* **Gerenciamento de URLs e Tarefas:**
+  * Permitirá associar URLs às tarefas e configurar a frequência de execução das tarefas para cada cliente.
+
+2. API Flask:
+
+* **Endpoints para Cadastro e Gestão:**
+  * Oferecerá endpoints tratamento de eventos na fila scrapping (RBMQ), validacao de codigo, URLs.
+  * Exemplo:
+    * `/api/scrapping`: Endpoints para criar arquivos frutos das validacoes e processamento de task.
+    * `/api/tasks`: Endpoints para definir a frequência e parâmetros das tarefas.
+* **Validação de Dados:**
+  * Validará os dados recebidos antes de armazená-los no servidor Django.
+
+3. Celery com RabbitMQ:
+
+* **Configuração do Celery:**
+  * Será configurado para gerenciar tarefas assíncronas.
+  * Definirá diferentes workers para processar tarefas diárias, semanais, quinzenais e mensais.
+* **Orquestração de Tarefas:**
+  * As tarefas serão enfileiradas no RabbitMQ, aguardando processamento pelos workers do Celery.
+  * Os workers serão configurados para executar as tarefas de acordo com a frequência especificada.
+* **Processamento das Tarefas:**
+  * Cada tipo de tarefa (diária, semanal, quinzenal, mensal) terá um worker dedicado para executar o tratamento e extração de dados das URLs associadas aos clientes.
+
+Essa arquitetura permitirá que os clientes sejam cadastrados, URLs sejam associadas a tarefas com diferentes frequências e que o sistema execute essas tarefas de forma assíncrona usando o Celery com RabbitMQ para orquestrar a execução das filas.
+
 
 
 ***`<center>`! LEMBRETE ! `</center>`***
