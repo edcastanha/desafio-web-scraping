@@ -12,7 +12,7 @@ services:
       - RABBITMQ_DEFAULT_USER=fake
       - RABBITMQ_DEFAULT_PASS=fake123
     volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -32,10 +32,10 @@ services:
       retries: 5
     environment:
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=clientDB
+      - POSTGRES_DB=simpleDB
       - POSTGRES_PASSWORD=fake123
     volumes:
-      - 'postgres_data:/var/lib/postgresql/data'
+      - './volumes/postgres:/var/lib/postgresql/data'
     ports:
       - 5432:5432
     networks:
@@ -47,16 +47,20 @@ services:
       context: django-server
       dockerfile: Dockerfile
     container_name: django-server
-    command: gunicorn --workers=2 --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
+    command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
     depends_on:
       - postgres-server
+    environment:
+      - PG_HOST=postgres-server
+      - PG_PORT=5432
+      - PG_DATABASE=simpleDB
+      - PG_PASSWORD=fake123
     restart: always
     ports:
       - "5005:5005"
     volumes:
       - ./django-server:/app
-      - logs_data:/app/media/logs/
-      - ./stasfiles:/app/staticfiles/
+      - ./volumes/logs:/app/media/logs/
     networks:
       - server-hosts
       - web_network
@@ -68,8 +72,7 @@ services:
       ports:
         - "7000:7000"
       volumes:
-        - ./nginx:/etc/nginx/conf.d
-        - ./stasfiles:/api/staticfiles/
+        - ./nginx-server:/etc/nginx/conf.d
       networks:
         - web_network
       depends_on:
@@ -86,8 +89,8 @@ services:
       - broker-server
     restart: always
     volumes:
-      - ftp_data:/api/media/ftp/
-      - logs_data:/api/media/logs/
+      - ./volumes/ftp:/api/media/ftp/
+      - ./volumes/logs:/api/media/logs/
     networks:
       - server-hosts
 
@@ -102,8 +105,8 @@ services:
       - broker-server
     restart: always
     volumes:
-      - ftp_data:/api/media/ftp/
-      - logs_data:/api/media/logs/
+      - ./volumes/ftp:/api/media/ftp/
+      - ./volumes/logs:/api/media/logs/
     networks:
       - server-hosts
 
@@ -132,32 +135,3 @@ networks:
     driver: bridge
   web_network:
     driver: bridge
-
-volumes:
-  postgres_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./volumes/postgres
-
-  rabbitmq_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./volumes/rabbitmq
-
-  logs_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./volumes/logs
-
-  ftp_data:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: ./volumes/ftp

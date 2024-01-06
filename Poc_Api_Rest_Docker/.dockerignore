@@ -14,7 +14,3 @@ venv/
 
 # Diretórios específicos para outras ferramentas
 .ipynb_checkpoints/
-
-
-Poc_Api_Rest_Docker/flask-server/Dockerfile
-Poc_Api_Rest_Docker/django-server/Dockerfile
