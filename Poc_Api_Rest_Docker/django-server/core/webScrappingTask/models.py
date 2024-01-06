@@ -11,7 +11,7 @@ class baseModel(models.Model):
 
 
 # Modelo para salvar informações do cliente, modelo ficticio
-class Cliente(baseModel):
+class Clientes(baseModel):
     nome = models.CharField(max_length=100)
     email = models.EmailField()
     # Adicione outros campos conforme necessário, como telefone, contrato, etc.
@@ -35,7 +35,7 @@ class InformacaoAlvo(baseModel):
         ('Finalizado', 'Finalizado'),
         ('Error', 'Error'),
         ) 
-    cliente = models.ForeignKey(Cliente, on_delete=models.CASCADE)
+    cliente = models.ForeignKey(Clientes, on_delete=models.CASCADE)
     url_alvo = models.URLField()
     codigo_acesso = models.CharField(max_length=12, blank=False, )
     status = models.CharField(max_length=10, choices=CHOICE_STATUS, default='Aguardando')

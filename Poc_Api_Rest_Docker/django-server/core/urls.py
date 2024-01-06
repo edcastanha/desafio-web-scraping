@@ -1,9 +1,10 @@
 from django.urls import include, path
 from django.conf.urls.static import static
 from django.conf import settings
+
 #URLs API
 from rest_framework import routers
-from core.webScrappingTask.urls import router
+from core.webScrappingTask.urls import router as webScrappingTask_router
 
 #URLs ADMIN e SITE
 from django.contrib import admin
@@ -11,7 +12,7 @@ from core.webScrappingTask import urls as app_urls
 
 # URLs DE API
 router = routers.DefaultRouter()
-router.registry.extend(router.registry)
+router.registry.extend(webScrappingTask_router.registry)
 
 # URLS DE ADMIN e SITE
 urlpatterns = [

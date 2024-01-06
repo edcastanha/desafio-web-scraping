@@ -1,0 +1,40 @@
+{% extends 'layout/base.html' %}
+{% load crispy_forms_tags %}
+
+<!-- Block title -->
+{% block title %} Log in {% endblock %}
+
+<!-- Block footer -->
+{% block footer %} style="color: #d3d3d3;" {% endblock %}
+
+<!-- Page content -->
+{% block content %}
+<div class="container card p-3 border-dark mt-5" style="width: 30%; height: 50%;">
+    <div class="card mb-3">
+
+        <div class="card-body">
+
+            <div class="pt-4 pb-2">
+                <h5 class="card-title text-center pb-0 fs-4">Area Restritiva - Site Teste</h5>
+                <p class="text-center small">Utilize como credencial 'admin' para iniciar sessão</p>
+            </div>
+            <!-- Form -->
+            <form class="row g-3 needs-validation" method="POST" autocomplete="off" novalidate>
+                {% csrf_token %}
+                {{ form|crispy }}
+                <br>
+                <button type="submit" class="btn btn-primary w-100">CONFERIR CREDENCIAIS</button>
+                <br>
+                <a href="{% url 'frontend' %}" class="btn btn-outline-secondary w-100  text-dark" id="btn-nav">
+                    RETORNAR A HOME
+                </a>
+            </form>
+            <div class="pt-4 pb-2">
+                <p>Grato pela atenção.</p>
+            </div>
+
+        </div>
+    </div>
+</div>
+<br> <br> <br> <br> <br> <br>
+{% endblock content %}
