@@ -1,0 +1,32 @@
+
+version: "3.8"
+
+services: 
+  api:
+    container_name: api
+    build: .
+    ports: 
+      - "8000:80"
+    environment: 
+      - MYSQL_HOST = mysql
+    volumes: 
+      - ./src:/home/api # Compartilamento de volume para o diretório src
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 512M  # Reserva mínima de memória para 256 MB
+  localstack:
+    image: localstack/localstack:latest
+    environment:
+      - AWS_DEFAULT_REGION=sa-east-1
+      - EDGE_PORT+4566
+      - SERVICES=s3,lambda
+    ports:
+      - '4566:4566'
+    volumes:
+      - "${TEMDIR:-/tmp/localstack}:/tmp/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
