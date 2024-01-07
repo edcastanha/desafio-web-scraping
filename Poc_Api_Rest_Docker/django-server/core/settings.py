@@ -22,12 +22,17 @@ PG_PASSWORD = os.environ.get('PG_PASSWORD', 'fake123')
 PG_DATABASE = os.environ.get('PG_DATABASE', 'simpleDB')
 PG_PORT = os.environ.get('PG_PORT', '5432')
 
+MYSQL_HOST = os.environ.get('MYSQL_HOST', 'localhost')
+MYSQL_USER = os.environ.get('MYSQL_USER', 'fake')
+MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD', 'fake123')
+MYSQL_DATABASE = os.environ.get('MYSQL_DATABASE', 'jobsDB')
+MYSQL_PORT = os.environ.get('MYSQL_PORT', '3306')
+
 RBMQ_HOST = os.environ.get('RBMQ_HOST', 'localhost')
 RBMQ_PORT = os.environ.get('RBMQ_PORT', '5672')
 RBMQ_USER = os.environ.get('RBMQ_USER', 'guest')
 RBMQ_PASS = os.environ.get('RBMQ_PASS', 'guest')
 BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@localhost:5672')
-# REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
 
 FTP_PATH  = os.path.join(BASE_DIR, os.environ.get('FTP_PATH', 'ftp'))
 
@@ -125,7 +130,24 @@ DATABASES = {
         'PASSWORD': PG_PASSWORD,
         'HOST': PG_HOST,
         'PORT': PG_PORT,
-    }
+    },
+    'mysql_db': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': MYSQL_DATABASE,
+        'USER': MYSQL_USER,
+        'PASSWORD': MYSQL_PASSWORD,
+        'HOST': MYSQL_HOST,
+        'PORT': MYSQL_PORT,
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+        },
+        'CONN_MAX_AGE': 300,
+        'TEST': {
+            'CHARSET': 'utf8mb4',
+            'COLLATION': 'utf8mb4_unicode_ci',
+        },
+    },
 }
 
 # Password validation

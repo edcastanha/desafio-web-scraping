@@ -1,6 +1,6 @@
 from celery import shared_task
 import requests
-from core.loggingMe import logger
+from core.helpers.loggingMe import logger
 from django.utils import timezone
 
 @shared_task(name="run_web_Scrapping_Task")

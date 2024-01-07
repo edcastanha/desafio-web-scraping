@@ -8,9 +8,6 @@ WORKDIR /jobs
 RUN apk update
 RUN pip install --upgrade pip
 
-COPY ./entrypoint.sh /jobs/entrypoint.sh
-RUN chmod +x /jobs/entrypoint.sh
-
 COPY ./requirements.txt /jobs/requirements.txt
 
 RUN pip install -r /jobs/requirements.txt

@@ -1,4 +1,4 @@
-from loggingMe import logger
+from helpers.loggingMe import logger
 
 
-logger.debug("This is a debug message")
+logger.info("Script TESTE")

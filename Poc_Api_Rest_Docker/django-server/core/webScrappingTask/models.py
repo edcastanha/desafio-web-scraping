@@ -48,6 +48,10 @@ class Tarefas(baseModel):
     def __str__(self):
         return f"Tarefa: {self.tarefa}, Status: {self.status}"
 
+    class Meta:
+        # Definir o banco de dados a ser usado pelo modelo Tarefas
+        using = 'mysql_db'
+
 
 @receiver(post_save, sender=InformacaoAlvo)
 def tarefa_pre_save(sender, instance, created, **kwargs):
