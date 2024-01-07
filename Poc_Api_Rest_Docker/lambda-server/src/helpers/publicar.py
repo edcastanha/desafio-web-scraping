@@ -1,5 +1,4 @@
 import pika
-import json
 from loggingMe import logger
 from configuration import Configuration
 

@@ -31,7 +31,7 @@ services:
       - "15672:15672"
       - "25676:25676"
     networks:
-      - server-hosts
+      - server-events
   
   # Postgres - System Database 
   postgres-server:
@@ -48,11 +48,36 @@ services:
       - POSTGRES_DB=simpleDB
       - POSTGRES_PASSWORD=fake123
     volumes:
-      - './volumes/postgres:/var/lib/postgresql/data'
+      - './volumes/postgres-data:/var/lib/postgresql/data'
     networks:
       - server-hosts
   
- # Django - System Admin / API REST 
+  # DB para Flask, ScriptJobs e Django
+  mysql-server:
+    image: mysql:latest
+    container_name: mysql-server
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: fake123
+      MYSQL_DATABASE: jobsDB
+      MYSQL_USER: fake
+      MYSQL_PASSWORD: fake123
+    volumes:
+      - ./volumes/mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 256M  # Reserva mínima de memória para 256 MB
+    networks:
+      - server-database
+
+  # Django - System Admin / API REST 
   django-server:
     build:
       context: django-server
@@ -61,6 +86,7 @@ services:
     command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
     depends_on:
       - postgres-server
+      - mysql-server
     env_file:
       - .envFile
     restart: always
@@ -69,10 +95,19 @@ services:
       - ./volumes/logs:/app/logs/
       - ./volumes/ftp:/app/media/
     networks:
+      - server-database
       - server-hosts
       - web_network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 2048M  # Limite de memória para 2048M MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 512M  # Reserva mínima de memória para 512 MB
 
-# Celery - System Task Manager
+  # Celery - System Task Manager
   beat-server:
     build:
       context: django-server
@@ -88,10 +123,18 @@ services:
       - ./django-server:/app
       - ./volumes/ftp:/app/ftp/
       - ./volumes/logs:/app/logs/
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 256M  # Reserva mínima de memória para 256 MB
     networks:
       - server-hosts
 
-# Celery - System Task Worker
+  # Celery - System Task Worker
   workers-server:
     build:
       context: django-server
@@ -107,19 +150,27 @@ services:
       - ./volumes/ftp:/app/ftp/
       - ./volumes/logs:/app/logs/
     networks:
-      - server-hosts
+      - server-database
     deploy:
-
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 256M  # Reserva mínima de memória para 256 MB
+  
+  # API - Flask para endpoint de tasks para Scraping
   flask-app:
     container_name: flask-app
     build:
       context: flask-server/
       dockerfile: Dockerfile
     restart: always
+    depends_on:
+      - mysql-server
     ports: 
       - "5000:5000"
-    environment: 
-      - MYSQL_HOST = mysql
     volumes: 
       - ./flask-server/api:/api # Compartilamento de volume para o diretório src
     deploy:
@@ -129,40 +180,42 @@ services:
           memory: 1024M  # Limite de memória para 1024 MB
         reservations:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
-          memory: 512M  # Reserva mínima de memória para 256 MB
+          memory: 256M  # Reserva mínima de memória para 256 MB
     networks:
       - server-hosts
       - web_network
-
+  
+  # Scripts para Jobs de Scrapping recebidos na Fila Scrapping
   jobs-server:
     container_name: jobs-server
     build:
-      context: jobs-server
+      context: lambda-server
       dockerfile: Dockerfile
     restart: always
-    command: ["python", "consumer-extrair-faces.py"]
-    environment:
-      - FPT_PATH = media/ftp/
-      - DATASET_PATH = media/dataset/
-      - CAPTURAS_PATH = media/capturas/
+    command: ["python", "consumer-scrapping.py"]
+    depends_on:
+      - mysql-server
     volumes:
-      - ./jobs-server:/app/
-      - ftp_data:/app/ftp/
-      - logs_data:/app/logs/
+      - ./jobs-server:/jobs/
+      - ./volumes/ftp:/jobs/ftp/
+      - ./volumes/logs:/jobs/logs/
     deploy:
       resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
         reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 256M  # Reserva mínima de memória para 256 MB
     networks:
-      - server-hosts
-
-
+      - server-events
 
 networks:
   server-hosts:
     driver: bridge
   web_network:
+    driver: bridge
+  server-events:
+    driver: bridge
+  server-database:
     driver: bridge
