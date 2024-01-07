@@ -1,8 +1,8 @@
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
 from rest_framework import permissions
-from core.webScrappingTask.models import Tarefas, Clientes, InformacaoAlvo
-from core.webScrappingTask.serializers import TarefasSerializer, ClientesSerializer, InformacaoAlvoSerializer
+from core.webScrappingTask.models import Tarefas, InformacaoAlvo
+from core.webScrappingTask.serializers import TarefasSerializer, InformacaoAlvoSerializer
 
 
 
@@ -15,15 +15,6 @@ class TarefasViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     http_method_names = ["get"]
 
-class ClientesViewSet(viewsets.ModelViewSet):
-    '''
-    ClientesViewSet: Classes para exibicao do DataSet Serializado do Model Clientes.
-    '''
-    queryset = Clientes.objects.all()
-    serializer_class = ClientesSerializer
-    permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ["get"]
-
 class InformacaoAlvoViewSet(viewsets.ModelViewSet):
     '''
     InformacaoAlvoViewSet: Classes para exibicao do DataSet Serializado do Model InformacaoAlvo.
@@ -31,4 +22,4 @@ class InformacaoAlvoViewSet(viewsets.ModelViewSet):
     queryset = InformacaoAlvo.objects.all()
     serializer_class = InformacaoAlvoSerializer
     permission_classes = [permissions.IsAuthenticated]
-    http_method_names = ["get"]
+    http_method_names = ["get", "post"]

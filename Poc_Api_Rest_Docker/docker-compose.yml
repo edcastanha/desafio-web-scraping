@@ -48,7 +48,6 @@ services:
       dockerfile: Dockerfile
     container_name: django-server
     command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
-
     depends_on:
       - postgres-server
     environment:
@@ -116,14 +115,15 @@ services:
   flask-app:
     container_name: flask-app
     build:
-      context: flask-server
+      context: flask-server/
       dockerfile: Dockerfile
+    restart: always
     ports: 
-      - "3000:80"
+      - "5000:5000"
     environment: 
       - MYSQL_HOST = mysql
     volumes: 
-      - ./flask-server:/api # Compartilamento de volume para o diretório src
+      - ./flask-server/api:/api # Compartilamento de volume para o diretório src
     deploy:
       resources:
         limits:
@@ -132,6 +132,9 @@ services:
         reservations:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
           memory: 512M  # Reserva mínima de memória para 256 MB
+    networks:
+      - server-hosts
+      - web_network
 
 networks:
   server-hosts:

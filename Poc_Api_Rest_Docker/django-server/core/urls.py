@@ -16,10 +16,12 @@ router.registry.extend(webScrappingTask_router.registry)
 
 # URLS DE ADMIN e SITE
 urlpatterns = [
+    path('', include(app_urls)),  # WEB
+    path('api/v1/', include(router.urls)),  # API REST
     path('admin/', admin.site.urls),  # ADMIN
-    path('api/v1/', include(app_urls)),  # API REST
 ]
 
-# INCLUDES static e media
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+#Adicione as rotas para os arquivos estáticos e de mídia apenas em ambiente de desenvolvimento
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

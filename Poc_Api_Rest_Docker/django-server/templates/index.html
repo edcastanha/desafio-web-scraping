@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Scrapping - II</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#">Logo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5">
+        <h2>Web Scrapping - II</h2>
+        <div class="col-lg-8 px-0">
+            <p class="fs-5">Esta é uma demonstração para teste de Web Scrapping <a
+                    href="https://github.com/edcastanha/desafio-web-scraping">
+                    EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB</a>.</p>
+
+        </div>
+        <hr class="col-1 my-12">
+        <form action="novaTarefa" method="POST" class="row g-3 needs-validation" novalidate>
+            {% csrf_token %}
+            <label for="basic-url" class="form-label">Dados para cadastro de tarefa</label>
+            <div class="input-group">
+                <span class="input-group-text" id="url">Url Alvo</span>
+                <input type="url" class="form-control" id="basic-url" name="url_alvo"
+                    aria-describedby="basic-addon3 basic-addon4" required>
+                <div class="invalid-feedback">
+                    URL inválida.
+                </div>
+                <span class="input-group-text">Código</span>
+                <input type="number" aria-label="Código" class="form-control" name="codigo_acesso" required>
+                <div class="invalid-feedback">
+                    Código inválido.
+                </div>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit">Registrar Tarefa</button>
+            </div>
+            <!-- Exibição da mensagem -->
+            {% if mensagem %}
+            <div class="alert alert-success" role="alert">
+                {{ mensagem }}
+            </div>
+            {% endif %}
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+        crossorigin="anonymous"></script>
+    <script>
+        (() => {
+            'use strict'
+
+            const forms = document.querySelectorAll('.needs-validation')
+
+            Array.from(forms).forEach(form => {
+                form.addEventListener('submit', event => {
+                    event.preventDefault();
+                    const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+
+                    fetch('novaTarefa', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            token: csrfToken,
+                            url_alvo: document.getElementById('basic-url').value,
+                            codigo_acesso: document.querySelector('input[name="codigo_acesso"]').value
+                            // Adicione outros campos, se necessário
+                        })
+                    })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json(); // Analisar a resposta JSON
+                            }
+                            throw new Error('Erro ao enviar formulário');
+                        })
+                        .then(data => {
+                            // Mostrar mensagem de sucesso
+                            const successMessage = document.querySelector('.alert-success');
+                            if (successMessage) {
+                                successMessage.textContent = data.mensagem;
+                                successMessage.style.display = 'block';
+                            }
+                            // Redirecionar para a mesma página após um curto período
+                            setTimeout(() => {
+                                window.location.reload(); // Recarregar a página atual
+                            }, 3000); // Recarregar após 3 segundos (opcional)
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                });
+            });
+
+            function getCookie(name) {
+                const value = `; ${document.cookie}`
+                const parts = value.split(`; ${name}=`)
+                if (parts.length === 2) return parts.pop().split(';').shift()
+            }
+        })();
+    </script>
+</body>
+
+</html>

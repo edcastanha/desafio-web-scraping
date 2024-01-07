@@ -75,14 +75,18 @@ MIDDLEWARE = [
 ]
 
 # Adicionar dominio de producao
-CSRF_TRUSTED_ORIGINS = ['*']
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost",
+    "http://localhost:7000",
+    # Adicione outros domínios permitidos conforme necessário
+]
 
 ROOT_URLCONF = 'core.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates/')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
