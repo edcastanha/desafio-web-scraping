@@ -4,10 +4,16 @@ ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
-EXPOSE 7000
 
-RUN apk update
-RUN pip install --upgrade pip
+RUN apk update \
+    && apk add --no-cache mariadb-connector-c-dev \
+                          build-base \
+                          mariadb-dev \
+                          postgresql-dev \
+                          libffi-dev \
+                          zlib-dev \
+                          jpeg-dev \
+                          && pip install --upgrade pip
 
 COPY ./entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh

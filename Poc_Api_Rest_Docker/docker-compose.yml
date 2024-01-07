@@ -116,8 +116,7 @@ services:
     env_file:
       - .envFile
     depends_on:
-      - postgres-server
-      - broker-server
+      - django-server
     restart: always
     volumes:
       - ./django-server:/app
@@ -143,7 +142,7 @@ services:
     env_file:
       - .envFile
     depends_on:
-      - postgres-server
+      - django-server
     restart: always
     volumes:      
       - ./django-server:/app
@@ -196,7 +195,7 @@ services:
     depends_on:
       - mysql-server
     volumes:
-      - ./jobs-server:/jobs/
+      - ./lambda-server/src/:/jobs/
       - ./volumes/ftp:/jobs/ftp/
       - ./volumes/logs:/jobs/logs/
     deploy:

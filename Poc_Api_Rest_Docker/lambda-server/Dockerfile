@@ -5,8 +5,16 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /jobs
 
-RUN apk update
-RUN pip install --upgrade pip
+RUN apk update \
+    && apk add --no-cache mariadb-connector-c-dev \
+                          build-base \
+                          mariadb-dev \
+                          postgresql-dev \
+                          libffi-dev \
+                          zlib-dev \
+                          jpeg-dev \
+                          && pip install --upgrade pip
+
 
 COPY ./requirements.txt /jobs/requirements.txt
 

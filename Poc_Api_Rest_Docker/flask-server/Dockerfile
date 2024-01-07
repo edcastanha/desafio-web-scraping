@@ -9,6 +9,16 @@ ENV PYTHONUNBUFFERED 1
 # Expondo path
 WORKDIR /api/
 
+RUN apk update \
+    && apk add --no-cache mariadb-connector-c-dev \
+                          build-base \
+                          mariadb-dev \
+                          postgresql-dev \
+                          libffi-dev \
+                          zlib-dev \
+                          jpeg-dev \
+                          && pip install --upgrade pip
+
 # Adiciona usuário 'api' (caso necessário)
 RUN adduser -D api
 
