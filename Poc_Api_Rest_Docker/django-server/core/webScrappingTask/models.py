@@ -1,7 +1,8 @@
 from django.db import models
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from core.webScrappingTask.tasks import run_webScrappingTask
+from core.helpers.tasks import run_webScrappingTask
+from core.helpers.loggingMe import logger
 
 # Classe base para todos os modelos, contendo informações de data de cadastro e atualização
 class BaseModel(models.Model):
@@ -54,10 +55,12 @@ class Tarefas(BaseModel):
 # Signal para executar uma tarefa após salvar uma nova instância de InformacaoAlvo
 @receiver(post_save, sender=InformacaoAlvo)
 def tarefa_pre_save(sender, instance, created, **kwargs):
+    logger.info(f"Tarefa pre-salva inicializada para {instance}")
+    # Verifica se a instância foi criada (created=True) e executa a tarefa de pre-salva se sim.
     if created:
         # Cria um dicionário com os dados da instância Tarefas e InformacaoAlvo
         task_data = {
-            'id_informacao_alvo': instance.id,
+            'id_informacao_alvo': instance,
             'tarefa': instance.token,
             'data_inicio': instance.data_cadastro.strftime('%Y-%m-%d %H:%M:%S'),
         }

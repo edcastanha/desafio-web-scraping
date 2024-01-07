@@ -1,5 +1,6 @@
-from flask import Blueprint, request, jsonify
 import os
+from flask import Blueprint, request, jsonify
+from helpers.service import TaskScraping
 
 blueprint = Blueprint("routes", __name__)
 
@@ -15,21 +16,24 @@ def scrapping():
     if input_args is None:
         return {"message": "conjunto de entrada invalido"}
 
-    url = input_args.get("img")
-    if img_path is None:
+    url = input_args.get("url")
+    if url is None:
         return {"message": "é necessário passar a entrada img_path"}
     
-    if img_path.split(".")[-1] not in ["jpg", "png", "jpeg"]:
-        return {"message": "é necessário passar a entrada img_path com extensão .jpg, .png ou .jpeg"}
+    codigo = input_args.get("codigo")
+    if url is None:
+        return {"message": "é necessário passar a entrada img_path"}
     
-    try: 
-        obj = service.represent(
-            img_path=img_path,
-            model_name=model_name,
-            detector_backend=detector_backend,
-            enforce_detection=enforce_detection,
-            align=align,
-        )
-        return obj
-    except Exception as e:
-        return {"error": str(e)}
+    key = input_args.get("url")
+    if url is None:
+        return {"message": "é necessário passar a entrada img_path"}
+    
+    if filesDown.split(".")[-1] not in ["txt", "pdf"]:
+        return {"message": "O arquivo nao contem a extensão valida ( txt ou pdf)"}
+    
+  from flask import Flask, jsonify, request
+
+
+@app.route('/scrape', methods=['POST'])
+def scrape_data():
+   
