@@ -6,6 +6,7 @@ ENV PYTHONUNBUFFERED=1
 WORKDIR /app
 
 RUN apk update \
+    && apk add --no-cache mariadb-client \
     && apk add --no-cache mariadb-connector-c-dev \
                           build-base \
                           mariadb-dev \

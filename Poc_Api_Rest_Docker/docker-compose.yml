@@ -1,4 +1,3 @@
-
 version: "3.8"
 
 services:
@@ -14,7 +13,7 @@ services:
       depends_on:
         - django-server
       networks:
-        - web_network
+        - web-network
     
   # RabbitMQ - Filas
   broker-server:
@@ -50,7 +49,7 @@ services:
     volumes:
       - './volumes/postgres-data:/var/lib/postgresql/data'
     networks:
-      - server-hosts
+      - server-db-postgres
   
   # DB para Flask, ScriptJobs e Django
   mysql-server:
@@ -75,7 +74,7 @@ services:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
           memory: 256M  # Reserva mínima de memória para 256 MB
     networks:
-      - server-database
+      - server-db-mysql
 
   # Django - System Admin / API REST 
   django-server:
@@ -95,9 +94,9 @@ services:
       - ./volumes/logs:/app/logs/
       - ./volumes/ftp:/app/media/
     networks:
-      - server-database
-      - server-hosts
-      - web_network
+      - server-db-postgres
+      - server-db-mysql
+      - web-network
     deploy:
       resources:
         limits:
@@ -131,7 +130,7 @@ services:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
           memory: 256M  # Reserva mínima de memória para 256 MB
     networks:
-      - server-hosts
+      - server-db-postgres
 
   # Celery - System Task Worker
   workers-server:
@@ -149,7 +148,7 @@ services:
       - ./volumes/ftp:/app/ftp/
       - ./volumes/logs:/app/logs/
     networks:
-      - server-database
+      - server-db-postgres
     deploy:
       resources:
         limits:
@@ -181,8 +180,8 @@ services:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
           memory: 256M  # Reserva mínima de memória para 256 MB
     networks:
-      - server-hosts
-      - web_network
+      - server-db-mysql
+      - server-events
   
   # Scripts para Jobs de Scrapping recebidos na Fila Scrapping
   jobs-server:
@@ -210,11 +209,11 @@ services:
       - server-events
 
 networks:
-  server-hosts:
+  server-db-postgres:
     driver: bridge
-  web_network:
+  web-network:
     driver: bridge
   server-events:
     driver: bridge
-  server-database:
+  server-db-mysql:
     driver: bridge
