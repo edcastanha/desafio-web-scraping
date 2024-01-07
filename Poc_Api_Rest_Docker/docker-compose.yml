@@ -48,6 +48,7 @@ services:
       dockerfile: Dockerfile
     container_name: django-server
     command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
+
     depends_on:
       - postgres-server
     environment:
@@ -60,7 +61,9 @@ services:
       - "5005:5005"
     volumes:
       - ./django-server:/app
-      - ./volumes/logs:/app/media/logs/
+      - ./volumes/logs:/app/logs/
+      - ./volumes/ftp:/app/media/
+
     networks:
       - server-hosts
       - web_network

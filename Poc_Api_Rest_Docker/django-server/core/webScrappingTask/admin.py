@@ -1,7 +1,7 @@
 from django.contrib import admin
-from core.webScrappingTask.models import Cliente, Tarefas, InformacaoAlvo
+from core.webScrappingTask.models import Clientes, Tarefas, InformacaoAlvo
 
 
-admin.site.register(Cliente)
+admin.site.register(Clientes)
 admin.site.register(Tarefas)
 admin.site.register(InformacaoAlvo)

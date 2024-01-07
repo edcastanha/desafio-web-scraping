@@ -59,20 +59,10 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'django_celery_results',
     'django_extensions',
-    # Forms
-    'crispy_forms',
-    'crispy_bootstrap5',
 
     # Apps
     'core.webScrappingTask.apps.WebscrappingtaskConfig'
 ]
-
-CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
-CRISPY_TEMPLATE_PACK = "bootstrap5"
-
-# LOGIN / LOGOUT
-LOGIN_REDIRECT_URL = 'backend'
-LOGOUT_REDIRECT_URL = 'frontend'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -172,3 +162,5 @@ STATICFILES_DIRS = [
 # python manage.py collectstatic
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

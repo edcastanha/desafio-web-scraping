@@ -9,8 +9,8 @@ EXPOSE 7000
 RUN apk update
 RUN pip install --upgrade pip
 
-#COPY ./entrypoint.sh /api/entrypoint.sh
-#RUN chmod +x /api/entrypoint.sh
+COPY ./entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 COPY ./requirements.txt /app/requirements.txt
 
@@ -19,4 +19,4 @@ RUN pip install -r /app/requirements.txt
 
 COPY . /app
 
-#ENTRYPOINT ["/bin/sh","/api/entrypoint.sh"]
+CMD ["/bin/sh","/app/entrypoint.sh"]

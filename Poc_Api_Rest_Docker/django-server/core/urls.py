@@ -17,8 +17,7 @@ router.registry.extend(webScrappingTask_router.registry)
 # URLS DE ADMIN e SITE
 urlpatterns = [
     path('admin/', admin.site.urls),  # ADMIN
-    path('api/v1/', include(router.urls)),  # API REST
-    path('', include(app_urls)),  # SITE
+    path('api/v1/', include(app_urls)),  # API REST
 ]
 
 # INCLUDES static e media
