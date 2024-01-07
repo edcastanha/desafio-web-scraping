@@ -27,6 +27,12 @@ RBMQ_PORT = os.environ.get('RBMQ_PORT', '5672')
 RBMQ_USER = os.environ.get('RBMQ_USER', 'guest')
 RBMQ_PASS = os.environ.get('RBMQ_PASS', 'guest')
 BROKER_URL = os.environ.get('BROKER_URL', 'amqp://guest:guest@localhost:5672')
+# REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+
+FTP_PATH  = os.path.join(BASE_DIR, os.environ.get('FTP_PATH', 'ftp'))
+
+EMAIL_USERNAME = os.environ.get('EMAIL_USERNAME')
+EMAIL_PASSWORD = os.environ.get('EMAIL_PASSWORD')
 
 
 # Quick-start development settings - unsuitable for production
@@ -168,3 +174,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# CELERY SETTINGS
+CELERY_TIMEZONE = 'America/Sao_Paulo'
+CELERY_BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = 'django-db'
+
+# PAra permitir que os atributos de resultados de tarefas disparadas 
+# (nome, args, kwargs, worker, retries, queue, delivery_info)  sejam escritos no backend.
+CELERY_RESULT_EXTENDED = True
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'

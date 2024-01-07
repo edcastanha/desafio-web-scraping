@@ -2,7 +2,20 @@
 version: "3.8"
 
 services:
-
+  # NGINX - Load balance / Proxy
+  nginx-server:
+      container_name: nginx-server
+      restart: always
+      image: "nginx:latest"
+      ports:
+        - "7000:7000"
+      volumes:
+        - ./nginx-server:/etc/nginx/conf.d
+      depends_on:
+        - django-server
+      networks:
+        - web_network
+    
   # RabbitMQ - Filas
   broker-server:
     image: rabbitmq:3-management
@@ -36,8 +49,6 @@ services:
       - POSTGRES_PASSWORD=fake123
     volumes:
       - './volumes/postgres:/var/lib/postgresql/data'
-    ports:
-      - 5432:5432
     networks:
       - server-hosts
   
@@ -50,67 +61,54 @@ services:
     command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
     depends_on:
       - postgres-server
-    environment:
-      - PG_HOST=postgres-server
-      - PG_PORT=5432
-      - PG_DATABASE=simpleDB
-      - PG_PASSWORD=fake123
+    env_file:
+      - .envFile
     restart: always
-    ports:
-      - "5005:5005"
     volumes:
       - ./django-server:/app
       - ./volumes/logs:/app/logs/
       - ./volumes/ftp:/app/media/
-
     networks:
       - server-hosts
       - web_network
 
-  nginx-server:
-      container_name: nginx-server
-      restart: always
-      image: "nginx:latest"
-      ports:
-        - "7000:7000"
-      volumes:
-        - ./nginx-server:/etc/nginx/conf.d
-      networks:
-        - web_network
-      depends_on:
-        - django-server
-
 # Celery - System Task Manager
-  beat-scheduler:
+  beat-server:
     build:
       context: django-server
       dockerfile: Dockerfile
-    command: celery -A core beat --loglevel=INFO --logfile=/api/media/logs/celery-beat.log --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: celery -A core beat --loglevel=INFO --logfile=/app/logs/celery-beat.log --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file:
+      - .envFile
     depends_on:
       - postgres-server
       - broker-server
     restart: always
     volumes:
-      - ./volumes/ftp:/api/media/ftp/
-      - ./volumes/logs:/api/media/logs/
+      - ./django-server:/app
+      - ./volumes/ftp:/app/ftp/
+      - ./volumes/logs:/app/logs/
     networks:
       - server-hosts
 
 # Celery - System Task Worker
-  tasks-workers:
+  workers-server:
     build:
       context: django-server
       dockerfile: Dockerfile
-    command: celery -A core worker --loglevel=INFO --logfile=/api/media/logs/celery-worker.log
+    command: celery -A core worker --loglevel=INFO --logfile=/app/logs/celery-worker.log
+    env_file:
+      - .envFile
     depends_on:
       - postgres-server
-      - broker-server
     restart: always
-    volumes:
-      - ./volumes/ftp:/api/media/ftp/
-      - ./volumes/logs:/api/media/logs/
+    volumes:      
+      - ./django-server:/app
+      - ./volumes/ftp:/app/ftp/
+      - ./volumes/logs:/app/logs/
     networks:
       - server-hosts
+    deploy:
 
   flask-app:
     container_name: flask-app
@@ -135,6 +133,33 @@ services:
     networks:
       - server-hosts
       - web_network
+
+  jobs-server:
+    container_name: jobs-server
+    build:
+      context: jobs-server
+      dockerfile: Dockerfile
+    restart: always
+    command: ["python", "consumer-extrair-faces.py"]
+    environment:
+      - FPT_PATH = media/ftp/
+      - DATASET_PATH = media/dataset/
+      - CAPTURAS_PATH = media/capturas/
+    volumes:
+      - ./jobs-server:/app/
+      - ftp_data:/app/ftp/
+      - logs_data:/app/logs/
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - server-hosts
+
+
 
 networks:
   server-hosts:
