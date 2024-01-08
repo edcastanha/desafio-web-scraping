@@ -1,5 +1,5 @@
 import pika
-from core.loggingMe import logger
+from core.helpers.loggingMe import logger
 from core.settings import RBMQ_HOST, RBMQ_PORT, RBMQ_USER, RBMQ_PASS
 
 class Publisher:
