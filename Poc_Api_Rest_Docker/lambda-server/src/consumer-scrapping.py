@@ -2,8 +2,6 @@ import pika
 import json
 import time
 from datetime import datetime as dt
-from helpers.conectionDB import DatabaseConnection
-from helpers.publisher import Push
 from helpers.logging_me import logger
 from helpers.configuration import Configuration
 from helpers.scrapping import Jobs
@@ -77,17 +75,16 @@ class ConsumerExtractor:
         code = data['codigo']
         self.db_connection.connect()
         try:
-            task = TaskScraping(url, code)
+            task = Jobs(url, code)
             task.scrape()
             logger.info(f'<*_ConsumerExtractor_*> Process_Message - Iniciado')
             now = dt.now()
             values =  (now, now, )
             self.db_connection.update(Configuration.UPDATE_QUERY, ('Finalizado', id_procesamento))
             self.db_connection.insert(Configuration.INSER_QUERY, values)
-            logger.info(f'<*_ConsumerExtractor_*> Execucoes SQL')         
+            logger.info(f'<*_ConsumerExtractor_*> Execucoes SQL com dados:: {values}')         
         except Exception as e:
             self.db_connection.update(Configuration.UPDATE_QUERY, ('Error', id_procesamento))
-
             error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
             logger.error(f'<*_ConsumerExtractor_*> Process_Message: {error_message}')
             #self.channel.basic_nack(method.delivery_tag, requeue=True) 

@@ -1,6 +1,7 @@
 import os
 import psycopg2
 from logging_me import logger
+from configuration import Configuration
 
 class DatabaseConnection:
     """
@@ -14,11 +15,11 @@ class DatabaseConnection:
     - db_port (str): Porta do banco de dados.
     """
     def __init__(self, db_url=None, db_user=None, db_pass=None, db_name=None, db_port=None):
-        self.db_url = db_url or os.environ.get('DATABASE_URL', 'postgres-server')
-        self.db_user = db_user or os.environ.get('DATABASE_USER', 'postgres')
-        self.db_pass = db_pass or os.environ.get('DATABASE_PASS', 'fake123')
-        self.db_name = db_name or os.environ.get('DATABASE_NAME', 'simpleDB')
-        self.db_port = db_port or os.environ.get('DATABASE_PORT', '5432')
+        self.db_url = Configuration.DATABASE_URL
+        self.db_user = Configuration.DATABASE_USER
+        self.db_pass = Configuration.DATABASE_PASS
+        self.db_name = Configuration.DATABASE_NAME
+        self.db_port = Configuration.DATABASE_PORT
         self.conn = None
         self.cursor = None
 

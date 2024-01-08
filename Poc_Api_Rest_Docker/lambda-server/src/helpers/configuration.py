@@ -1,31 +1,120 @@
-class Configuration:
+import os
+import psycopg2
+from logging_me import logger
+from configuration import Configuration
+
+class DatabaseConnection:
+    """
+    Classe responsável pela conexão e operações com o banco de dados PostgreSQL.
+
+    Args:
+    - db_url (str): URL do banco de dados.
+    - db_user (str): Nome de usuário do banco de dados.
+    - db_pass (str): Senha do banco de dados.
+    - db_name (str): Nome do banco de dados.
+    - db_port (str): Porta do banco de dados.
+    """
+    def __init__(self, db_url=None, db_user=None, db_pass=None, db_name=None, db_port=None):
+        # Variáveis de instância obtidas da classe de configuração Configuration
+        self.db_url = Configuration.DATABASE_URL if not db_url else db_url
+        self.db_user = Configuration.DATABASE_USER if not db_user else db_user
+        self.db_pass = Configuration.DATABASE_PASS if not db_pass else db_pass
+        self.db_name = Configuration.DATABASE_NAME if not db_name else db_name
+        self.db_port = Configuration.DATABASE_PORT if not db_port else db_port
+        self.conn = None
+        self.cursor = None
+
+    def connect(self):
+        """
+        Estabelece a conexão com o banco de dados.
+        """
+        try:
+            self.conn = psycopg2.connect(
+                dbname=self.db_name,
+                user=self.db_user,
+                password=self.db_pass,
+                host=self.db_url,
+                port=self.db_port
+            )
+            self.cursor = self.conn.cursor()
+            logger.info("<*_ConnectionDB_*> Connection to database established successfully")
+        except psycopg2.Error as e:
+            logger.error(f"Error connecting to the database: {e}")
+
+    def update(self, query, params=None):
+        """
+        Executa uma query de atualização (UPDATE) no banco de dados.
+
+        Args:
+        - query (str): Query SQL de atualização.
+        - params (tuple): Parâmetros para a query (opcional).
+        """
+        if not self.conn:
+            self.connect()
+
+        try:
+            self.cursor.execute(query, params)
+            self.conn.commit()
+            logger.info("<*_ConnectionDB_*> Update query executed successfully")
+        except psycopg2.Error as e:
+            self.conn.rollback()
+            logger.error(f"Error executing update query: {e}")
+
+    def insert(self, query, params=None):
+        """
+        Executa uma query de inserção (INSERT) no banco de dados.
+
+        Args:
+        - query (str): Query SQL de inserção.
+        - params (tuple): Parâmetros para a query (opcional).
+        """
+        if not self.conn:
+            self.connect()
+
+        try:
+            self.cursor.execute(query, params)
+            self.conn.commit()
+            logger.info("<*_ConnectionDB_*> Insert query executed successfully")
+        except psycopg2.Error as e:
+            self.conn.rollback()
+            logger.error(f"Error executing insert query: {e}")
+
+    def select(self, query, params=None):
+        """
+        Executa uma query de seleção (SELECT) no banco de dados e retorna o resultado.
+
+        Args:
+        - query (str): Query SQL de seleção.
+        - params (tuple): Parâmetros para a query (opcional).
+
+        Returns:
+        - result (list): Resultado da query de seleção.
+        """
+        if not self.conn:
+            self.connect()
+
+        try:
+            self.cursor.execute(query, params)
+            result = self.cursor.fetchall()
+            return result
+        except psycopg2.Error as e:
+            logger.error(f"Error executing select query: {e}")
+
+    def close(self):
+        """
+        Fecha a conexão com o banco de dados.
+        """
+        logger.info("<*_ConnectionDB_*> Closing database connection")
+        if self.cursor:
+            self.cursor.close()
+        if self.conn:
+            self.conn.close()
     
-    # ---------------------------------- RabbitMQ ----------------------------------
-    RMQ_SERVER = 'broker-server'
-    RMQ_PORT = 5672
-    RMQ_USER = 'guest'
-    RMQ_PASS = 'guest'
-    RMQ_EXCHANGE = 'secedu'
+    def is_connected(self):
+        """
+        Verifica se a conexão com o banco de dados está estabelecida.
 
-    RMQ_QUEUE_PUBLISHIR = 'tasks'
-    RMQ_ROUTE_KEY = 'init'
-
-     
-    UPDATE_QUERY = """
-        UPDATE 
-            webScrappingTask_InformacaoAlvo 
-        SET 
-            status = %s WHERE id = %s
-    """
-    INSER_QUERY = """
-        INSERT INTO webScrappingTask_tarefas (
-            id_informacao_alvo_id, 
-            tarefa, 
-            status, 
-            data_inicio, 
-            data_fim
-          )
-        VALUES (
-           %s, %s, %s, %s, %s, %s, %s
-           )
-    """
+        Returns:
+        - bool: True se estiver conectado, False caso contrário.
+        """
+        return self.conn is not None
