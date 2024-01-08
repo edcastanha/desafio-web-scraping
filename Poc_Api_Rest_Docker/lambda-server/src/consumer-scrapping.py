@@ -71,7 +71,10 @@ class ConsumerExtractor:
         logger.debug('<*_ConsumerExtractor_*> Run - Init')
         try:
             if not self.reconnecting:
+                logger.error(f'<*_ConsumerExtractor_*> 1-Run:')
                 self.connect_to_rabbitmq()  # Conecta-se ao RabbitMQ se não estiver reconectando
+
+            logger.error(f'<*_ConsumerExtractor_*> 2-Run:')
 
             self.channel.start_consuming()  # Inicia o consumo de mensagens
         except KeyboardInterrupt:
@@ -93,6 +96,7 @@ class ConsumerExtractor:
         '''
         Funcao
         '''
+        logger.debug(f"Conteúdo de 'body': {body}")
         # Processa a mensagem recebida do RabbitMQ
         data = json.loads(body)
         id_procesamento = int(data['id'])
@@ -123,6 +127,7 @@ class ConsumerExtractor:
             # Atualiza o status do processamento e registra a finalização do processamento da mensagem
             self.db_connection.update(Configuration.UPDATE_QUERY, ('Finalizado', id_procesamento))
             logger.info(f'<*_ConsumerExtractor_*> Process_Message - Finish')
+
          
 if __name__ == "__main__":
     job = ConsumerExtractor()

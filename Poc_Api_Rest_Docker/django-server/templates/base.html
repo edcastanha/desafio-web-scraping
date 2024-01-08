@@ -30,32 +30,31 @@
     </nav>
 
     <div class="container my-12">
-        <h2>Web Scrapping - II</h2>
+        <h3>Web Scrapping - II</h3>
         <div class="col-lg-8 px-0">
             <p class="fs-5">Esta é uma demonstração para teste de Web Scrapping <a
                     href="https://github.com/edcastanha/desafio-web-scraping">
                     EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB</a>.</p>
 
         </div>
-        <hr class="col-1 my-12">
-            <div class="container">
-                {% if messages %}
-                {% for message in messages %}
-                <div class="alert alert-{{message.tags}}">
-                    {{message}}
-                </div>
-                {% endfor %}
-                {% endif %}
+        <hr>
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}}">
+            {{message}}
+        </div>
+        {% endfor %}
+        {% endif %}
 
-                {%block content %}
-                {%endblock content%}
-            </div>
+        {%block content %}
+        {%endblock content%}
+
         <footer class="footer">
             <div class="container">
-                <p>© Copyright {% now "Y" %} by <a href="https://www.pythontutorial.net">Python Tutorial</a></p>
+                <p>© Copyright {% now "Y" %} by <a href="#"></a></p>
             </div>
         </footer>
 
-    </body>
+</body>
 
 </html>

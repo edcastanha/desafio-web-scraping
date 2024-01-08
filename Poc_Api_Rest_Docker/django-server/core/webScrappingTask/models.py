@@ -13,7 +13,6 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-
 class InformacaoAlvo(BaseModel):
     # Opções para o campo 'status'
     CHOICE_STATUS = (

@@ -1,7 +1,7 @@
 import logging
 
 logging.basicConfig(filename='logs/jobs-scrapping.log')
-logger = logging.getLogger('** SecEdu ::')
+logger = logging.getLogger('** Simple ::')
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
