@@ -1,17 +1,8 @@
-from django.urls import path, include  # Adicionando 'include'
-from rest_framework import routers
-from core.webScrappingTask.api import TarefasViewSet, InformacaoAlvoViewSet
-from core.webScrappingTask.views import index, new_target  # Importando as views corretamente
+from django.urls import path
+from core.webScrappingTask.views import index, new_goal
 
-# URLS API
-router = routers.DefaultRouter()
-router.register(r'tasks', TarefasViewSet, basename='tasks')
-router.register(r'targets', InformacaoAlvoViewSet, basename='targets')
-
-# WEB APP
+# Configuração das URLs da aplicação web
 urlpatterns = [
     path('', index, name='index'),
-    path('api/new_goal/', new_target, name='new_target'),  # Corrigindo o caminho da nova meta
-    path('api/', include(router.urls)),  # Adicionando as rotas da API
-    # outras URLs...
+    path('new_goal/', new_goal, name='new_goal'),
 ]
