@@ -24,9 +24,9 @@ class InformacaoAlvo(BaseModel):
     )
     token = models.CharField(max_length=100, unique=True)
     url_alvo = models.URLField()
-    codigo_acesso = models.CharField(max_length=12, blank=False)
+    codigo_acesso = models.CharField(blank=False)
     status = models.CharField(
-        max_length=10, choices=CHOICE_STATUS, default="Aguardando"
+        max_length=11, choices=CHOICE_STATUS, default="Aguardando"
     )
     url_arquivo = (
         models.URLField()
@@ -67,8 +67,9 @@ def tarefa_pre_save(sender, instance, created, **kwargs):
     if created:
         # Cria um dicionário com os dados da instância Tarefas e InformacaoAlvo
         task_data = {
-            "tarefa": instance.id,
-            "data_inicio": instance.data_cadastro.strftime("%Y-%m-%d %H:%M:%S"),
+            "id": instance.id,
+            "url": instance.url_alvo,
+            "codigo": instance.codigo_acesso
         }
         # Dispara a tarefa do Celery passando os dados das instâncias Tarefas e InformacaoAlvo como argumento
         run_webScrappingTask.delay(task_data)
