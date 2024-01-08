@@ -79,16 +79,11 @@ Aqui está uma descrição detalhada de cada componente:
 
 3. Celery com RabbitMQ:
 
-* **Configuração do Celery:**
-  * Será configurado para gerenciar tarefas assíncronas.
-  * Definirá diferentes workers para processar tarefas diárias, semanais, quinzenais e mensais.
-* **Orquestração de Tarefas:**
-  * As tarefas serão enfileiradas no RabbitMQ, aguardando processamento pelos workers do Celery.
-  * Os workers serão configurados para executar as tarefas de acordo com a frequência especificada.
-* **Processamento das Tarefas:**
-  * Cada tipo de tarefa (diária, semanal, quinzenal, mensal) terá um worker dedicado para executar o tratamento e extração de dados das URLs associadas aos clientes.
+* Nao concluido - Seria responsaval para tarefas cadastradas por periodo - TODO
 
-Essa e uma de muitas possiveis aboradagem para arquitetar uma solucao.
+
+
+### Essa e uma de muitas possiveis aboradagem para arquitetar uma solucao.
 
 Em Volumes/logs podemos acompanhar os processos via ferrametas de observabilidade capiturando ERROR  etc.
 
