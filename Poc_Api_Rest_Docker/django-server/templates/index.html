@@ -37,7 +37,7 @@
 
         </div>
         <hr class="col-1 my-12">
-        <form action="novaTarefa" method="POST" class="row g-3 needs-validation" novalidate>
+        <form action="new_task" method="POST" class="row g-3 needs-validation" novalidate>
             {% csrf_token %}
             <label for="basic-url" class="form-label">Dados para cadastro de tarefa</label>
             <div class="input-group">
@@ -79,7 +79,7 @@
                     event.preventDefault();
                     const csrfToken = document.getElementsByName('csrfmiddlewaretoken')[0].value;
 
-                    fetch('novaTarefa', {
+                    fetch('new_task', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
