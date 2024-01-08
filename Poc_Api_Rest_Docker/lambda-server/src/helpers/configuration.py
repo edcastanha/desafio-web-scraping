@@ -8,7 +8,7 @@ class Configuration:
     RMQ_EXCHANGE = 'teste'
 
     RMQ_QUEUE_CONSUMER = 'scrapping'
-    RMQ_QUEUE_PUBLISHIR = 'tasks'
+    RMQ_QUEUE_PUBLISHIR = 'sucess'
     RMQ_ROUTE_KEY = 'tasks'
 
 

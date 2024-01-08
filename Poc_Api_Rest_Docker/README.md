@@ -43,7 +43,7 @@ git clone .https://github.com/edcastanha/scraping_api
 cd desafio-web-scraping/Poc_Api_Rest_Docker/
 docker-compose up -d
 docker exec -it django-server sh entrypoint.sh
-docker exec -it django-server 
+docker-compose up -d 
 ```
 
 ### Arquitetura Geral:
