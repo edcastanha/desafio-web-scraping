@@ -88,6 +88,8 @@ services:
       dockerfile: Dockerfile
     restart: always
     command: ["python", "consumer-scrapping.py"]
+    depends_on:
+      - django-server
     volumes:
       - ./lambda-server/src/:/jobs/
       - ./volumes/ftp:/jobs/ftp/
