@@ -1,4 +1,3 @@
-import os
 from flask import Blueprint, request, jsonify
 from helpers.service import TaskScraping
 
@@ -11,6 +10,9 @@ def home():
 
 @blueprint.route("/scrapping" , methods=["POST"])
 def scrapping():
+    '''
+    Classe deve verificar url e codigo e disparar publisher para Fila de tasks com mensagem contendo url e codigos validos
+    '''
     input_args = request.get_json()
 
     if input_args is None:
@@ -18,22 +20,11 @@ def scrapping():
 
     url = input_args.get("url")
     if url is None:
-        return {"message": "é necessário passar a entrada img_path"}
+        return {"message": "é necessário passar a entrada url"}
     
     codigo = input_args.get("codigo")
-    if url is None:
-        return {"message": "é necessário passar a entrada img_path"}
+    if codigo is None:
+        return {"message": "é necessário passar a entrada codigo"}
     
-    key = input_args.get("url")
-    if url is None:
-        return {"message": "é necessário passar a entrada img_path"}
-    
-    if filesDown.split(".")[-1] not in ["txt", "pdf"]:
-        return {"message": "O arquivo nao contem a extensão valida ( txt ou pdf)"}
-    
-  from flask import Flask, jsonify, request
-
-
-@app.route('/scrape', methods=['POST'])
-def scrape_data():
    
+retomando
