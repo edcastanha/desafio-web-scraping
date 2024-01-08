@@ -4,7 +4,7 @@ from core.settings import RBMQ_HOST, RBMQ_PORT, RBMQ_USER, RBMQ_PASS
 
 class Publisher:
     """
-    Classe responsável por publicar mensagens em filas de mensageria ( RabbitMQ para o exemplo do WebScrapping).
+    Classe responsável por publicar mensagens em filas de mensageria (RabbitMQ para o exemplo do WebScrapping).
 
     Args:
     - exchange (str): Nome da exchange.
@@ -42,10 +42,22 @@ class Publisher:
         Caso não exista, a fila é criada.
         """
         try:
+            # Cria a exchange se não existir
+            self.channel.exchange_declare(exchange=self.exchange, exchange_type='direct')
+
+            # Cria a fila se não existir
             self.channel.queue_declare(queue=self.queue_name, durable=True)
-            logger.info(f' <**_Core_Publisher_**> Fila "{self.queue_name}" verificada/criada com sucesso')
+
+            # Faz o bind da fila à exchange
+            self.channel.queue_bind(
+                exchange=self.exchange,
+                queue=self.queue_name,
+                routing_key=self.routing_key
+            )
+
+            logger.info(f'Exchange e fila verificadas/criadas com sucesso')
         except Exception as e:
-            logger.error(f' <**_Core_Publisher_**> Erro ao verificar/criar fila::{str(e)}')
+            logger.error(f'Erro ao verificar/criar exchange e fila: {str(e)}')
             self.close()
 
     def publish_message(self, message, routing_key=None):
@@ -59,7 +71,7 @@ class Publisher:
         if routing_key is None:
             routing_key = self.routing_key
 
-        logger.info(f' <**_Publicando na Fila_ **> ROUTER_KEY:: {routing_key}')
+        logger.info(f'<**_Publicando na Fila_**> ROUTER_KEY:: {routing_key}')
         try:
             self.channel.basic_publish(
                 exchange=self.exchange,
@@ -68,7 +80,7 @@ class Publisher:
                 properties=self.properties
             )
         except Exception as e:
-            logger.error(f' <**_Core_Publisher_**> Erro ao Publicar::{str(e)}')
+            logger.error(f'<**_Core_Publisher_**> Erro ao Publicar: {str(e)}')
             self.close()
 
     def bind_queue(self, routing_key=None):
@@ -81,7 +93,7 @@ class Publisher:
         if routing_key is None:
             routing_key = self.routing_key
 
-        logger.info(f' <**_Ligando na Fila_**> ROUTER_KEY:: {routing_key}')
+        logger.info(f'<**_Ligando na Fila_**> ROUTER_KEY:: {routing_key}')
         try:
             self.channel.queue_bind(
                 queue=self.queue_name,
@@ -89,7 +101,7 @@ class Publisher:
                 routing_key=routing_key
             )
         except Exception as e:
-            logger.error(f' <**_Core_Publisher_**> Erro ao fazer bind na fila::{str(e)}')
+            logger.error(f'<**_Core_Publisher_**> Erro ao fazer bind na fila: {str(e)}')
             self.close()
 
     def close(self):
@@ -98,4 +110,4 @@ class Publisher:
         """
         if self.channel.is_open:
             self.channel.close()
-            logger.info(f' <**_Core_Publisher_**> Fechando Canal Comunicacao')
+            logger.info(f'<**_Core_Publisher_**> Fechando Canal Comunicacao')

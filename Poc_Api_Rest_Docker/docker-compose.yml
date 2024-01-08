@@ -70,6 +70,7 @@ services:
     networks:
       - server-db-postgres
       - web-network
+      - server-events
     deploy:
       resources:
         limits:

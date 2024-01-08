@@ -39,10 +39,11 @@ Publicação: O código finalizado deve ser publicado em um repositório GitHub,
 ## Execução  - via Container Docker
 
 ```
-$ git clone .https://github.com/edcastanha/scraping_api
-# >>> Cloning into 'desafio-web-scraping'...
-$ cd desafio-web-scraping/Poc_Api_Rest_Docker/
-$ docker-compose up -d
+git clone .https://github.com/edcastanha/scraping_api
+cd desafio-web-scraping/Poc_Api_Rest_Docker/
+docker-compose up -d
+docker exec -it django-server sh entrypoint.sh
+docker exec -it django-server 
 ```
 
 ### Arquitetura Geral:
