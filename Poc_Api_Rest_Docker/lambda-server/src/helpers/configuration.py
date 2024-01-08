@@ -6,3 +6,26 @@ class Configuration:
     RMQ_USER = 'guest'
     RMQ_PASS = 'guest'
     RMQ_EXCHANGE = 'secedu'
+
+    RMQ_QUEUE_PUBLISHIR = 'tasks'
+    RMQ_ROUTE_KEY = 'init'
+
+     
+    UPDATE_QUERY = """
+        UPDATE 
+            webScrappingTask_InformacaoAlvo 
+        SET 
+            status = %s WHERE id = %s
+    """
+    INSER_QUERY = """
+        INSERT INTO webScrappingTask_tarefas (
+            id_informacao_alvo_id, 
+            tarefa, 
+            status, 
+            data_inicio, 
+            data_fim
+          )
+        VALUES (
+           %s, %s, %s, %s, %s, %s, %s
+           )
+    """

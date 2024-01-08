@@ -22,7 +22,7 @@ services:
     restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=fake
-      - RABBITMQ_DEFAULT_PASS=fake123
+      - RABBITMQ_DEFAULT_PASS=fake123       
     volumes:
       - ./volumes/rabbitmq:/var/lib/rabbitmq
     ports:
