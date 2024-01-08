@@ -14,11 +14,11 @@ from core.webScrappingTask import urls as app_urls
 router = routers.DefaultRouter()
 router.registry.extend(webScrappingTask_router.registry)
 
-# URLS DE ADMIN e SITE
+# URLS DE ADMIN, API e SITE
 urlpatterns = [
-    path('', include(app_urls)),  # WEB
-    path('api/v1/', include(router.urls)),  # API REST
-    path('admin/', admin.site.urls),  # ADMIN
+    path('', include(app_urls)),
+    path('api-auth/', include('rest_framework.urls')),
+    path('admin/', admin.site.urls),
 ]
 
 #Adicione as rotas para os arquivos estáticos e de mídia apenas em ambiente de desenvolvimento

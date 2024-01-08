@@ -81,9 +81,7 @@ Aqui está uma descrição detalhada de cada componente:
 
 * Nao concluido - Seria responsaval para tarefas cadastradas por periodo - TODO
 
-
-
-### Essa e uma de muitas possiveis aboradagem para arquitetar uma solucao.
+##### Essa e uma de muitas possiveis aboradagem para arquitetar uma solucao.
 
 Em Volumes/logs podemos acompanhar os processos via ferrametas de observabilidade capiturando ERROR  etc.
 

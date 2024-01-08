@@ -80,59 +80,6 @@ services:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
           memory: 512M  # Reserva mínima de memória para 512 MB
 
-  # Celery - System Task Manager
-  beat-server:
-    build:
-      context: django-server
-      dockerfile: Dockerfile
-    command: celery -A core beat --loglevel=INFO --logfile=/app/logs/celery-beat.log --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    env_file:
-      - .envFile
-    depends_on:
-      - django-server
-    restart: always
-    volumes:
-      - ./django-server:/app
-      - ./volumes/ftp:/app/ftp/
-      - ./volumes/logs:/app/logs/
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
-          memory: 1024M  # Limite de memória para 1024 MB
-        reservations:
-          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
-          memory: 256M  # Reserva mínima de memória para 256 MB
-    networks:
-      - server-db-postgres
-
-  # Celery - System Task Worker
-  workers-server:
-    build:
-      context: django-server
-      dockerfile: Dockerfile
-    command: celery -A core worker --loglevel=INFO --logfile=/app/logs/celery-worker.log
-    env_file:
-      - .envFile
-    depends_on:
-      - django-server
-    restart: always
-    volumes:      
-      - ./django-server:/app
-      - ./volumes/ftp:/app/ftp/
-      - ./volumes/logs:/app/logs/
-    networks:
-      - server-db-postgres
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
-          memory: 1024M  # Limite de memória para 1024 MB
-        reservations:
-          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
-          memory: 256M  # Reserva mínima de memória para 256 MB
-  
-
   # Scripts para Jobs de Scrapping recebidos na Fila Scrapping
   jobs-server:
     container_name: jobs-server
