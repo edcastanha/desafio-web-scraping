@@ -1,9 +1,9 @@
 import pika
-from loggingMe import logger
+from logging_me import logger
 from configuration import Configuration
 
 
-class Publisher:
+class Push:
     def __init__(self):
         self.connection = pika.BlockingConnection(
             pika.ConnectionParameters(
