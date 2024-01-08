@@ -1,6 +1,5 @@
 import pika
 from django.conf import settings
-from celery import shared_task
 from core.helpers.loggingMe import logger
 from core.helpers.publisher import Publisher  
 from django.core.serializers import serialize
@@ -10,7 +9,6 @@ import requests
 # Objeto da classe Publisher
 publisher = Publisher(exchange='teste', queue_name='scrapping', routing_key='tasks')
 
-@shared_task(name="run_web_Scrapping_Task")
 def run_webScrappingTask(task_instance):
     """
     Tarefa Celery para realizar scraping e enviar a instância InformacaoAlvo para a fila RabbitMQ.
