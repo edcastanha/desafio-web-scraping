@@ -1,7 +1,6 @@
 {%extends 'base.html'%}
 
 {%block content%}
-<div class="center col-1 my-12">
     <form method="post" novaldiate class="row g-3 needs-validation">
         {% csrf_token %}
         <h2 class="text-center">Registre um Tarefa de Scrapping</h2>
@@ -22,5 +21,4 @@
     <p>Dados Salvos:</p>
     <p>ID: {{ id_salvo }} - Token: {{ token_salvo }}</p>
     {% endif %}
-</div>
 {%endblock content%}
