@@ -36,13 +36,14 @@ Publicação: O código finalizado deve ser publicado em um repositório GitHub,
 - Docker
 - Docker-Compose
 
-## Execução - via Container Docker
+## Execução  - via Container Docker
 
 ```
-$ git clone .https://github.com/edcastanha/scraping_api
-# >>> Cloning into 'desafio-web-scraping'...
-$ cd desafio-web-scraping/Poc_Api_Rest_Docker/
-$ docker-compose up
+git clone .https://github.com/edcastanha/scraping_api
+cd desafio-web-scraping/Poc_Api_Rest_Docker/
+docker-compose up -d
+docker exec -it django-server sh entrypoint.sh
+docker-compose up -d 
 ```
 
 ### Arquitetura Geral:
@@ -69,13 +70,10 @@ Aqui está uma descrição detalhada de cada componente:
 * **Gerenciamento de URLs e Tarefas:**
   * Permitirá associar URLs às tarefas e configurar a frequência de execução das tarefas para cada cliente.
 
-2. API Flask:
+2. Jobs-Server:
 
-* **Endpoints para Cadastro e Gestão:**
-  * Oferecerá endpoints tratamento de eventos na fila scrapping (RBMQ), validacao de codigo, URLs.
-  * Exemplo:
-    * `/api/scrapping`: Endpoints para criar arquivos frutos das validacoes e processamento de task.
-    * `/api/tasks`: Endpoints para definir a frequência e parâmetros das tarefas.
+* **Consumer:**
+  * Escuta fila 'scrapping' no RabbitMQ
 * **Validação de Dados:**
   * Validará os dados recebidos antes de armazená-los no servidor Django.
 
@@ -90,9 +88,9 @@ Aqui está uma descrição detalhada de cada componente:
 * **Processamento das Tarefas:**
   * Cada tipo de tarefa (diária, semanal, quinzenal, mensal) terá um worker dedicado para executar o tratamento e extração de dados das URLs associadas aos clientes.
 
-Essa arquitetura permitirá que os clientes sejam cadastrados, URLs sejam associadas a tarefas com diferentes frequências e que o sistema execute essas tarefas de forma assíncrona usando o Celery com RabbitMQ para orquestrar a execução das filas.
+Essa e uma de muitas possiveis aboradagem para arquitetar uma solucao.
 
-
+Em Volumes/logs podemos acompanhar os processos via ferrametas de observabilidade capiturando ERROR  etc.
 
 ***`<center>`! LEMBRETE ! `</center>`***
 

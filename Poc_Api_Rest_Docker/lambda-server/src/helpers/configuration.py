@@ -3,13 +3,20 @@ class Configuration:
     # ---------------------------------- RabbitMQ ----------------------------------
     RMQ_SERVER = 'broker-server'
     RMQ_PORT = 5672
-    RMQ_USER = 'guest'
-    RMQ_PASS = 'guest'
-    RMQ_EXCHANGE = 'secedu'
+    RMQ_USER = 'fake'
+    RMQ_PASS = 'fake123'
+    RMQ_EXCHANGE = 'teste'
 
-    RMQ_QUEUE_PUBLISHIR = 'tasks'
-    RMQ_ROUTE_KEY = 'init'
+    RMQ_QUEUE_CONSUMER = 'scrapping'
+    RMQ_QUEUE_PUBLISHIR = 'sucess'
+    RMQ_ROUTE_KEY = 'tasks'
 
+
+    DATABASE_URL = 'postgres-server'
+    DATABASE_USER = 'postgres'
+    DATABASE_PASS = 'fake123'
+    DATABASE_NAME = 'simpleDB'
+    DATABASE_PORT = 5432
      
     UPDATE_QUERY = """
         UPDATE 
