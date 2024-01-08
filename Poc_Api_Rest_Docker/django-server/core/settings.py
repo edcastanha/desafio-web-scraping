@@ -61,8 +61,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # Libs
     'rest_framework.apps.RestFrameworkConfig',
-    'django_celery_beat',
-    'django_celery_results',
     'django_extensions',
 
     # Apps
@@ -168,13 +166,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-# CELERY SETTINGS
-CELERY_TIMEZONE = 'America/Sao_Paulo'
-CELERY_BROKER_URL = BROKER_URL
-CELERY_RESULT_BACKEND = 'django-db'
-
-# PAra permitir que os atributos de resultados de tarefas disparadas 
-# (nome, args, kwargs, worker, retries, queue, delivery_info)  sejam escritos no backend.
-CELERY_RESULT_EXTENDED = True
-CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
