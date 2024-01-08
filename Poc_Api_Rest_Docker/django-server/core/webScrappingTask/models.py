@@ -68,7 +68,7 @@ def task_pre_save(sender, instance, created, **kwargs):
         task_data = {
             "id": instance.id,
             "url": instance.url_alvo,
-            "codigo": instance.codigo_acesso
+            "codigo": instance.codigo_acesso,
         }
         logger.info(f"task_pre_save:: {task_data}")
         # Dispara a tarefa do Celery passando os dados das instâncias Tarefas e InformacaoAlvo como argumento
