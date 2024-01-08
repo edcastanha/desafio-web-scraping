@@ -1,6 +1,6 @@
 import pika
-from logging_me import logger
-from configuration import Configuration
+from .logging_me import logger
+from .configuration import Configuration
 
 
 class Push:

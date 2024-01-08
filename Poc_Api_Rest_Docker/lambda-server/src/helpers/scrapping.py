@@ -2,8 +2,8 @@ import os
 import requests
 from urllib.parse import urlparse
 from datetime import datetime
-from custom_parser import CustomHTMLParser
-from logging_me import logger  # Importa o módulo logger
+from .custom_parser import CustomHTMLParser
+from .logging_me import logger  # Importa o módulo logger
 
 class Jobs:
     '''
