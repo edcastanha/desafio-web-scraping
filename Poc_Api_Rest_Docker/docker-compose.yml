@@ -1,0 +1,165 @@
+version: "3.8"
+
+services:
+  # NGINX - Load balance / Proxy
+  nginx-server:
+      container_name: nginx-server
+      restart: always
+      image: "nginx:latest"
+      ports:
+        - "7000:7000"
+      volumes:
+        - ./nginx-server:/etc/nginx/conf.d
+      depends_on:
+        - django-server
+      networks:
+        - web-network
+    
+  # RabbitMQ - Filas
+  broker-server:
+    image: rabbitmq:3-management
+    container_name: broker-server
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=fake
+      - RABBITMQ_DEFAULT_PASS=fake123
+    volumes:
+      - ./volumes/rabbitmq:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "25676:25676"
+    networks:
+      - server-events
+  
+  # Postgres - System Database 
+  postgres-server:
+    image: postgres:alpine3.18
+    container_name: postgres-server
+    restart: always
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=simpleDB
+      - POSTGRES_PASSWORD=fake123
+    volumes:
+      - './volumes/postgres-data:/var/lib/postgresql/data'
+    networks:
+      - server-db-postgres
+
+  # Django - System Admin / API REST 
+  django-server:
+    build:
+      context: django-server
+      dockerfile: Dockerfile
+    container_name: django-server
+    command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
+    depends_on:
+      - postgres-server
+    env_file:
+      - .envFile
+    restart: always
+    volumes:
+      - ./django-server:/app
+      - ./volumes/logs:/app/logs/
+      - ./volumes/ftp:/app/media/
+    networks:
+      - server-db-postgres
+      - web-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 2048M  # Limite de memória para 2048M MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 512M  # Reserva mínima de memória para 512 MB
+
+  # Celery - System Task Manager
+  beat-server:
+    build:
+      context: django-server
+      dockerfile: Dockerfile
+    command: celery -A core beat --loglevel=INFO --logfile=/app/logs/celery-beat.log --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    env_file:
+      - .envFile
+    depends_on:
+      - django-server
+    restart: always
+    volumes:
+      - ./django-server:/app
+      - ./volumes/ftp:/app/ftp/
+      - ./volumes/logs:/app/logs/
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 256M  # Reserva mínima de memória para 256 MB
+    networks:
+      - server-db-postgres
+
+  # Celery - System Task Worker
+  workers-server:
+    build:
+      context: django-server
+      dockerfile: Dockerfile
+    command: celery -A core worker --loglevel=INFO --logfile=/app/logs/celery-worker.log
+    env_file:
+      - .envFile
+    depends_on:
+      - django-server
+    restart: always
+    volumes:      
+      - ./django-server:/app
+      - ./volumes/ftp:/app/ftp/
+      - ./volumes/logs:/app/logs/
+    networks:
+      - server-db-postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 256M  # Reserva mínima de memória para 256 MB
+  
+
+  # Scripts para Jobs de Scrapping recebidos na Fila Scrapping
+  jobs-server:
+    container_name: jobs-server
+    build:
+      context: lambda-server
+      dockerfile: Dockerfile
+    restart: always
+    command: ["python", "consumer-scrapping.py"]
+    volumes:
+      - ./lambda-server/src/:/jobs/
+      - ./volumes/ftp:/jobs/ftp/
+      - ./volumes/logs:/jobs/logs/
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
+          memory: 1024M  # Limite de memória para 1024 MB
+        reservations:
+          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
+          memory: 256M  # Reserva mínima de memória para 256 MB
+    networks:
+      - server-events
+
+networks:
+  server-db-postgres:
+    driver: bridge
+  web-network:
+    driver: bridge
+  server-events:
+    driver: bridge
+
