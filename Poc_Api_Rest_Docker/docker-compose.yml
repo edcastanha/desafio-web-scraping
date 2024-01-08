@@ -50,31 +50,6 @@ services:
       - './volumes/postgres-data:/var/lib/postgresql/data'
     networks:
       - server-db-postgres
-  
-  # DB para Flask, ScriptJobs e Django
-  mysql-server:
-    image: mysql:latest
-    container_name: mysql-server
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: fake123
-      MYSQL_DATABASE: jobsDB
-      MYSQL_USER: fake
-      MYSQL_PASSWORD: fake123
-    volumes:
-      - ./volumes/mysql-data:/var/lib/mysql
-    ports:
-      - "3306:3306"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
-          memory: 1024M  # Limite de memória para 1024 MB
-        reservations:
-          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
-          memory: 256M  # Reserva mínima de memória para 256 MB
-    networks:
-      - server-db-mysql
 
   # Django - System Admin / API REST 
   django-server:
@@ -85,7 +60,6 @@ services:
     command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
     depends_on:
       - postgres-server
-      - mysql-server
     env_file:
       - .envFile
     restart: always
@@ -95,7 +69,6 @@ services:
       - ./volumes/ftp:/app/media/
     networks:
       - server-db-postgres
-      - server-db-mysql
       - web-network
     deploy:
       resources:
@@ -158,31 +131,7 @@ services:
           cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
           memory: 256M  # Reserva mínima de memória para 256 MB
   
-  # API - Flask para endpoint de tasks para Scraping
-  flask-app:
-    container_name: flask-app
-    build:
-      context: flask-server/
-      dockerfile: Dockerfile
-    restart: always
-    depends_on:
-      - mysql-server
-    ports: 
-      - "5000:5000"
-    volumes: 
-      - ./flask-server/api:/api # Compartilamento de volume para o diretório src
-    deploy:
-      resources:
-        limits:
-          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
-          memory: 1024M  # Limite de memória para 1024 MB
-        reservations:
-          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
-          memory: 256M  # Reserva mínima de memória para 256 MB
-    networks:
-      - server-db-mysql
-      - server-events
-  
+
   # Scripts para Jobs de Scrapping recebidos na Fila Scrapping
   jobs-server:
     container_name: jobs-server
@@ -191,8 +140,6 @@ services:
       dockerfile: Dockerfile
     restart: always
     command: ["python", "consumer-scrapping.py"]
-    depends_on:
-      - mysql-server
     volumes:
       - ./lambda-server/src/:/jobs/
       - ./volumes/ftp:/jobs/ftp/
@@ -215,5 +162,4 @@ networks:
     driver: bridge
   server-events:
     driver: bridge
-  server-db-mysql:
-    driver: bridge
+
