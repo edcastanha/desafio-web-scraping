@@ -5,6 +5,7 @@ from datetime import datetime as dt
 from helpers.logging_me import logger
 from helpers.configuration import Configuration
 from helpers.scrapping import Jobs
+from helpers.conectionDB import DatabaseConnection
 
 class ConsumerExtractor:
     def __init__(self):

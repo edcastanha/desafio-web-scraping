@@ -14,7 +14,7 @@ class Configuration:
     DATABASE_URL = 'postgres-server'
     DATABASE_USER = 'postgres'
     DATABASE_PASS = 'fake123'
-    DATABASE_NAME = simpleDB
+    DATABASE_NAME = 'simpleDB'
     DATABASE_PORT = 5432
      
     UPDATE_QUERY = """

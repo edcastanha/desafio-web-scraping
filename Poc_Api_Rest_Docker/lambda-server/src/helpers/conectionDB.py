@@ -1,6 +1,6 @@
 import psycopg2
 from .logging_me import logger
-from .configurationconfiguration import Configuration
+from .configuration import Configuration
 
 class DatabaseConnection:
     """
