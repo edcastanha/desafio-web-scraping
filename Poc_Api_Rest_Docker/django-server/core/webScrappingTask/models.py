@@ -35,17 +35,6 @@ class InformacaoAlvo(BaseModel):
     def __str__(self):
         return f"Código: {self.codigo_acesso}, URL: {self.url_alvo}"
 
-    def get_data(self):
-        # Retorna dados formatados para a instância InformacaoAlvo
-        return {
-            "id": self.id,
-            "token": self.token,
-            "url_alvo": self.url_alvo,
-            "codigo_acesso": self.codigo_acesso,
-            "status": self.status,
-            "path_arquivo": self.url_arquivo,  # Corrigido para 'url_arquivo'
-            "data_atualizado": self.data_atualizacao.strftime("%d/%m/%Y %H:%M:%S"),
-        }
 
 
 class Tarefas(BaseModel):
@@ -64,12 +53,13 @@ class Tarefas(BaseModel):
 def task_pre_save(sender, instance, created, **kwargs):
     # Verifica se a instância foi criada (created=True) e executa a tarefa de pre-salva se sim.
     if created:
-        # Cria um dicionário com os dados da instância Tarefas e InformacaoAlvo
-        task_data = {
-            "id": instance.id,
-            "url": instance.url_alvo,
-            "codigo": instance.codigo_acesso
-        }
-        logger.info(f"task_pre_save:: {task_data}")
-        # Dispara a tarefa do Celery passando os dados das instâncias Tarefas e InformacaoAlvo como argumento
-        run_webScrappingTask.delay(task_data)
+        try:
+            task_instance = instance
+
+            # Chama a função para executar a tarefa de web scraping passando a instância
+            run_webScrappingTask(task_instance)
+            
+        except Exception as e:
+            # Trate o erro de acordo com a sua lógica
+            # Por exemplo, você pode registrar o erro em um arquivo de log
+            print(f"Erro ao executar a tarefa de web scraping: {e}")
