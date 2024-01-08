@@ -61,7 +61,7 @@ class Tarefas(BaseModel):
 
 # Signal para executar uma tarefa após salvar uma nova instância de InformacaoAlvo
 @receiver(post_save, sender=InformacaoAlvo)
-def tarefa_pre_save(sender, instance, created, **kwargs):
+def task_pre_save(sender, instance, created, **kwargs):
     # Verifica se a instância foi criada (created=True) e executa a tarefa de pre-salva se sim.
     if created:
         # Cria um dicionário com os dados da instância Tarefas e InformacaoAlvo
@@ -70,6 +70,6 @@ def tarefa_pre_save(sender, instance, created, **kwargs):
             "url": instance.url_alvo,
             "codigo": instance.codigo_acesso
         }
-        logger.info(f"tarefa_pre_save:: {task_data}")
+        logger.info(f"task_pre_save:: {task_data}")
         # Dispara a tarefa do Celery passando os dados das instâncias Tarefas e InformacaoAlvo como argumento
         run_webScrappingTask.delay(task_data)
