@@ -1,0 +1,10 @@
+PG_HOST=postgres-server
+PG_PORT=5432
+PG_DATABASE=simpleDB
+PG_PASSWORD=fake123
+
+RBMQ_HOST=broker-server
+RBMQ_PORT=5672
+RBMQ_USER=fake
+RBMQ_PASS=fake123
+BROKER_URL=amqp://fake:fake123@broker-server:5672
