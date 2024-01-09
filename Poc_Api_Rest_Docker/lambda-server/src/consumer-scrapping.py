@@ -68,16 +68,17 @@ class ConsumerExtractor:
         '''
         Funcao
         '''
-        logger.debug('<*_ConsumerExtractor_*> Run - Init')
         try:
             if not self.reconnecting:
-                logger.error(f'<*_ConsumerExtractor_*> 1-Run:')
+                logger.debug(f'<*_ConsumerExtractor_*> reconnecting:')
                 self.connect_to_rabbitmq()  # Conecta-se ao RabbitMQ se não estiver reconectando
 
-            logger.error(f'<*_ConsumerExtractor_*> 2-Run:')
-
+            logger.debug('<*_ConsumerExtractor_*> Run - Init')
             self.channel.start_consuming()  # Inicia o consumo de mensagens
-        except KeyboardInterrupt:
+
+        except KeyboardInterrupt as k:
+            error_message = f"Uma exceção do tipo {type(k).__name__} ocorreu com a mensagem: {str(k)}"
+            logger.debug(f'<*_ConsumerExtractor_*> {KeyboardInterrupt}:')
             self.channel.stop_consuming()  # Encerra o consumo de mensagens em caso de interrupção do teclado
         except Exception as e:
             # Em caso de exceção, tenta reconectar-se dentro do limite de tentativas
@@ -98,35 +99,40 @@ class ConsumerExtractor:
         '''
         logger.debug(f"Conteúdo de 'body': {body}")
         # Processa a mensagem recebida do RabbitMQ
-        data = json.loads(body)
-        id_procesamento = int(data['id'])
-        url = data['url']
-        code = data['codigo']
-        self.db_connection.connect()
         try:
-            # Executa tarefas associadas ao Jobs
-            task = Jobs(url, code)
-            task.scrape()
+            data = json.loads(body)
 
-            logger.info(f'<*_ConsumerExtractor_*> Process_Message - Iniciado')
+            id_procesamento = data['id']
+            url = data['url']
+            code = data['codigo']
 
-            now = dt.now()
-            values = (now, now,id_procesamento, url, True)
-            self.db_connection.update(Configuration.UPDATE_QUERY, ('Processando', id_procesamento))
-            self.db_connection.insert(Configuration.INSER_QUERY, values)
+            self.db_connection.connect()
+            logger.info(f'<*_ConsumerExtractor_*> Process_Message - {data} tipo {type(data).__name__}')
+            try:
+                # Executa tarefas associadas ao Jobs
+                task = Jobs(url, code)
+                task.scrape()
 
-            logger.info(f'<*_ConsumerExtractor_*> Execucoes SQL com dados:: {values}')         
-        except Exception as e:
-            # Em caso de exceção, registra o erro e confirma a entrega da mensagem
-            self.db_connection.update(Configuration.UPDATE_QUERY, ('Error', id_procesamento))
+                now = dt.now()
+                values = (now, now, id_procesamento, url, True)
+                self.db_connection.update(Configuration.UPDATE_QUERY, ('Processando', id_procesamento))
+                self.db_connection.insert(Configuration.INSER_QUERY, values)
+
+                logger.info(f'<*_ConsumerExtractor_*> Execucoes SQL com dados:: {values}')         
+            except Exception as e:
+                # Em caso de exceção, registra o erro e confirma a entrega da mensagem
+                self.db_connection.update(Configuration.UPDATE_QUERY, ('Error', id_procesamento))
+                error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
+                logger.error(f'<*_ConsumerExtractor_*> Process_Message: {error_message}')
+                self.channel.basic_ack(method.delivery_tag)
+            finally:
+                self.channel.basic_ack(method.delivery_tag)
+                # Atualiza o status do processamento e registra a finalização do processamento da mensagem
+                self.db_connection.update(Configuration.UPDATE_QUERY, ('Finalizado', id_procesamento))
+                logger.info(f'<*_ConsumerExtractor_*> Process_Message - Finish')
+        except json.JSONDecodeError as e:
             error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
-            logger.error(f'<*_ConsumerExtractor_*> Process_Message: {error_message}')
-            self.channel.basic_ack(method.delivery_tag)
-        finally:
-            self.channel.basic_ack(method.delivery_tag)
-            # Atualiza o status do processamento e registra a finalização do processamento da mensagem
-            self.db_connection.update(Configuration.UPDATE_QUERY, ('Finalizado', id_procesamento))
-            logger.info(f'<*_ConsumerExtractor_*> Process_Message - Finish')
+            logger.error(f'<*_ConsumerExtractor_*> Process_Message JSON Decode Error: {error_message}')
 
          
 if __name__ == "__main__":
