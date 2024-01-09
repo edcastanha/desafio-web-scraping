@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 6666,
+            "driver": "PostgreSQL",
+            "name": "simpleDB",
+            "database": "simpleDB",
+            "username": "postgres"
+        }
+    ]
+}
