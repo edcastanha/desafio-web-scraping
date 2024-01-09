@@ -114,8 +114,11 @@ class ConsumerExtractor:
                 task.scrape()
 
                 now = dt.now()
-                values = (now, now, id_procesamento, url, True)
+
+                values = ( code, True,  now, now, id_procesamento)
+
                 self.db_connection.update(Configuration.UPDATE_QUERY, ('Processando', id_procesamento))
+                
                 self.db_connection.insert(Configuration.INSER_QUERY, values)
 
                 logger.info(f'<*_ConsumerExtractor_*> Execucoes SQL com dados:: {values}')         

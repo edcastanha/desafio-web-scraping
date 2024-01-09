@@ -20,19 +20,19 @@ class Configuration:
      
     UPDATE_QUERY = """
         UPDATE 
-            webScrappingTask_InformacaoAlvo 
+            webScrappingTask_informacaoalvo 
         SET 
             status = %s WHERE id = %s
     """
     INSER_QUERY = """
         INSERT INTO webScrappingTask_tarefas (
-            id_informacao_alvo_id, 
-            tarefa, 
-            status, 
-            data_inicio, 
-            data_fim
+            tarefa,
+            status,
+            data_inicio,
+            data_fim,
+            id_informacao_alvo_id
           )
         VALUES (
-           %s, %s, %s, %s, %s, %s, %s
+           %s, %s, %s, %s, %s
            )
     """
