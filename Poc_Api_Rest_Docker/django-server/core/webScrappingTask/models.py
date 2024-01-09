@@ -3,6 +3,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from core.helpers.tasks import run_webScrappingTask
 from core.helpers.loggingMe import logger
+import json
 
 # Classe base para todos os modelos, contendo informações de data de cadastro e atualização
 class BaseModel(models.Model):
@@ -51,17 +52,18 @@ class Tarefas(BaseModel):
 def task_pre_save(sender, instance, created, **kwargs):
     # Verifica se a instância foi criada (created=True) e executa a tarefa de pre-salva se sim.
     if created:
-        logger.debug(f':: Models - task_pre_save:: created')
+        logger.debug(f':: Models - task_pre_save:: created {type(instance).__name__}')
         try:
-            task_instance = instance
-            data = {
+            # Serializa a instância para um formato JSON
+            serialized_instance = json.dumps({
                 "id": instance.pk,
                 "codigo": instance.codigo_acesso,
-                "url": instance.url_alvo,
-            }
-            logger.debug(f':: Models - task_pre_save:: DATA={data}')
+                "url": instance.url_alvo
+            })
+            logger.debug(f':: Models - task_pre_save:: DATA={serialized_instance}')
             # Chama a função para executar a tarefa de web scraping passando a instância
-            run_webScrappingTask(instance)  # Passa a instância do modelo InformacaoAlvo
+            run_webScrappingTask(serialized_instance)  # Passa a instância do modelo InformacaoAlvo
             
         except Exception as e:
+            error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
             logger.error(f'<:: Models - task_pre_save:: Exception: {e}')

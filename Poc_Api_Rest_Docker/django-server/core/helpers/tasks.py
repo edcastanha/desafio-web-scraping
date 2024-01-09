@@ -19,17 +19,12 @@ def run_webScrappingTask(task_instance):
     """
     try:
         inicio = timezone.now()
-        logger.debug(f'<:: Tasks - run_webScrappingTask::{task_instance.id} as {inicio}')
-        
-        # Serializa a instância para um formato que pode ser transmitido
-        serialized_instance = serialize('json', [task_instance])
-
-        # Converte o dicionário em JSON
-        serialized_instance = json.dumps(serialized_instance)
+        logger.debug(f'<:: Tasks - run_webScrappingTask:: Data = {task_instance} as {inicio}')
 
         # Publica a mensagem na fila RabbitMQ com a instância serializada usando o objeto da classe Publisher
-        publisher.publish_message(serialized_instance)  # Passa a instância serializada como mensagem
+        publisher.publish_message(task_instance, 'proccess')  # Passa a instância serializada como mensagem
         
         logger.debug(f'<:: Tasks - run_webScrappingTask:: Publisher Queue')
     except requests.exceptions.RequestException as e:
-        logger.error(f'<:: Tasks - run_webScrappingTask:: Exception: {e}')
+        error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
+        logger.error(f'<:: Tasks - run_webScrappingTask:: Exception: {error_message}')

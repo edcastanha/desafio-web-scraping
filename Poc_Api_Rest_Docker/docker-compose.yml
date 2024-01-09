@@ -23,8 +23,6 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=fake
       - RABBITMQ_DEFAULT_PASS=fake123       
-    volumes:
-      - ./volumes/rabbitmq:/var/lib/rabbitmq
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -60,6 +58,7 @@ services:
     command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
     depends_on:
       - postgres-server
+      - broker-server
     env_file:
       - .envFile
     restart: always
@@ -90,6 +89,7 @@ services:
     command: ["python", "consumer-scrapping.py"]
     depends_on:
       - django-server
+      - broker-server
     volumes:
       - ./lambda-server/src/:/jobs/
       - ./volumes/ftp:/jobs/ftp/
