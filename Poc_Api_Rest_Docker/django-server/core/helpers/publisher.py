@@ -11,7 +11,7 @@ class Publisher:
     - queue_name (str): Nome da fila a ser verificada/criada.
     - routing_key (str): Chave de roteamento para a mensagem.
     """
-    def __init__(self, exchange='teste', queue_name='scrapping', routing_key='tasks'):
+    def __init__(self, exchange, queue_name, routing_key):
         self.exchange = exchange
         self.queue_name = queue_name
         self.routing_key = routing_key
@@ -37,7 +37,7 @@ class Publisher:
             )
         )
 
-    def create_or_get_queue(self):
+    def create_or_get_queue(self, routing_key = 'proccess'):
         """
         Verifica se a fila especificada existe no RabbitMQ.
         Caso não exista, a fila é criada.
@@ -61,7 +61,7 @@ class Publisher:
             logger.error(f'Erro ao verificar/criar exchange e fila: {str(e)}')
             self.close()
 
-    def create_or_get_queue_success(self):
+    def create_or_get_queue_success(self, routing_key = 'update'):
             """
             Verifica se a fila especificada existe no RabbitMQ.
             Caso não exista, a fila é criada.
