@@ -4,7 +4,6 @@ from django.dispatch import receiver
 from core.helpers.tasks import run_webScrappingTask
 from core.helpers.loggingMe import logger
 
-
 # Classe base para todos os modelos, contendo informações de data de cadastro e atualização
 class BaseModel(models.Model):
     data_cadastro = models.DateTimeField(auto_now_add=True)
@@ -52,13 +51,17 @@ class Tarefas(BaseModel):
 def task_pre_save(sender, instance, created, **kwargs):
     # Verifica se a instância foi criada (created=True) e executa a tarefa de pre-salva se sim.
     if created:
+        logger.debug(f':: Models - task_pre_save:: created')
         try:
             task_instance = instance
-
+            data = {
+                "id": instance.pk,
+                "codigo": instance.codigo_acesso,
+                "url": instance.url_alvo,
+            }
+            logger.debug(f':: Models - task_pre_save:: DATA={data}')
             # Chama a função para executar a tarefa de web scraping passando a instância
-            run_webScrappingTask(task_instance)
+            run_webScrappingTask(instance)  # Passa a instância do modelo InformacaoAlvo
             
         except Exception as e:
-            # Trate o erro de acordo com a sua lógica
-            # Por exemplo, você pode registrar o erro em um arquivo de log
-            print(f"Erro ao executar a tarefa de web scraping: {e}")
+            logger.error(f'<:: Models - task_pre_save:: Exception: {e}')
