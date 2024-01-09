@@ -18,7 +18,7 @@ class Jobs:
         # Inicializa os atributos da classe
         self.csrf_token = None
         self.url = url
-        self.base_path = 'volume'
+        self.base_path = 'ftp'
         self.codigo = codigo
         self.session = requests.Session()  # Cria uma sessão HTTP
         self.headers = {

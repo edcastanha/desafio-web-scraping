@@ -92,7 +92,7 @@ services:
       - broker-server
     volumes:
       - ./lambda-server/src/:/jobs/
-      - ./volumes/ftp:/jobs/ftp/
+      - ./volumes/ftp/:/jobs/ftp/
       - ./volumes/logs:/jobs/logs/
     deploy:
       resources:
@@ -104,6 +104,7 @@ services:
           memory: 256M  # Reserva mínima de memória para 256 MB
     networks:
       - server-events
+      - server-db-postgres
 
 networks:
   server-db-postgres:
