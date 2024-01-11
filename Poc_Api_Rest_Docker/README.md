@@ -26,8 +26,6 @@ Publicação: O código finalizado deve ser publicado em um repositório GitHub,
 * Selenium é uma ferramenta que permite controlar um navegador web pelo computador. Funciona em diferentes navegadores e sistemas operacionais, e pode ser usado com várias linguagens de programação, como Python. Geralmente é usado para testar aplicativos web automaticamente, mas também ajuda a coletar dados de sites quando não há APIs disponíveis.
 * Qualquer biblioteca que permita o controle do navegador do usuário.
 
-# Do Desafio - API REST - Flask
-
 ## 1 - PoC Web Scraping - EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB
 
 ### Pré-requisitos
