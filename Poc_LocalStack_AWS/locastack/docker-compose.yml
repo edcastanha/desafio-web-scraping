@@ -10,7 +10,7 @@ services:
       - AWS_DEFAULT_REGION=us-west-2
       - DOCKER_HOST=unix:///var/run/docker.sock
       - DATA_DIR=/tmp/localstack/data
-      - SERVICES=serverless,cognito,rds,sqs,sns,cloudformation
+      - SERVICES=serverless,rds,sqs,sns,cloudformation
       - HOST_TMP_FOLDER=${TMPDIR}
       - KINESIS_STREAM_SHARDS=1
       - KINESIS_ERROR_PROBABILITY=0.0
