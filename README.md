@@ -38,12 +38,6 @@ Devido à restrição de não utilização da biblioteca Selenium e outras semel
 
 Sendo assim, aproveitei a oportunidade para realizar uma análise comparativa entre BeautifulSoup e Scrapy para web scraping. Um exemplo de sintaxe e desempenho encontra-se em `./PoC_Scripts_Jupyter/src/` <<< [Veja mais](./PoC_Scripts_Jupyter/) >>> .
 
----
-
-# `<center>` Do Desafio - Script Jupyter Noteboo `</center>`
-
-## 1 - PoC Web Scraping - EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB
-
 ### Pré-requisitos
 
 - Git
@@ -51,8 +45,13 @@ Sendo assim, aproveitei a oportunidade para realizar uma análise comparativa en
 - Docker-Compose
 
 * imagen final com tamanho de 876.19 MB baseada na [Jupyter Docker Stacks](https://github.com/jupyter/docker-stacks)
+* 
+---
+## EXTRAÇÃO E ORGANIZAÇÃO DE DADOS ALVO WEB
 
-## Execução - via Container Docker
+### 1 - PoC Web Scraping - 
+
+#### Execução - via Container Docker
 
 ```
 $ git clone .https://github.com/edcastanha/scraping_api
@@ -68,6 +67,51 @@ Acessando o Jupyter Notebook >>> http://127.0.0.1:8888/lab?token=9675434...
 Abra pasta `src/` e execute o scrypt `resolucao_desafio.ipynb` (preencha  url e codigo com informacoes validas)
 
 ![Tela Jupyter Notebook](image\README\1702850082562.png "Exec Run Cell")
+
+
+### 1 - PoC Web Scraping - EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB
+
+#### Execução - via Container Docker
+```
+git clone .https://github.com/edcastanha/scraping_api
+cd desafio-web-scraping/Poc_Api_Rest_Docker/
+docker-compose up -d
+docker exec -it django-server sh entrypoint.sh
+docker-compose up -d 
+```
+
+### Arquitetura Geral:
+
+1. **Servidor Django:**
+   * Será responsável pela definição dos modelos de dados do cliente, URLs e configurações relacionadas.
+2. **RabbitMQ Server:**
+   * Broker de mensagens para orquestrar as filas.
+3. **ConSumer Jobs-Server:**
+   * Script responsavel pelo processamento das tarefas cadastradas no sistema e  enfileirados no Broker. 
+
+Aqui está uma descrição detalhada de cada componente:
+
+1. Servidor Django:
+
+* **Modelos de Dados:**
+  * Criará modelos de dados para CODIGO, URL e configurações de tarefas.
+  * Exemplo:
+    * Modelo Alvo: URL, CODIGO, Descrição, etc.
+    * Modelo Tarefa: Tipo (diária, semanal, quinzenal, mensal), Parâmetros, Cliente Associado, Alvo Associada, etc.
+
+2. Jobs-Server:
+
+* **Consumer:**
+  * Escuta fila 'scrapping' no RabbitMQ
+* **Validação de Dados:**
+  * Validará os dados recebidos antes de armazená-los no servidor Django;
+  * Processa url e codigo via POST para aquisição de response contendo dados de files
+  * Executa processamento para armazenar arquivos nos volumes configurados e compartilhados no serviço Django
+
+##### Essa e uma de muitas possiveis aboradagem para arquitetar uma solucao.
+
+Em Volumes/logs podemos acompanhar os processos via ferrametas de observabilidade capiturando ERROR  etc.
+
 
 ***`<center>`! LEMBRETE ! `</center>`***
 
