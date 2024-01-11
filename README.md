@@ -62,11 +62,11 @@ $ docker-compose up
 
 Acessando o Jupyter Notebook >>> http://127.0.0.1:8888/lab?token=9675434...
 
-![1702841871677](image/README/1702841871677.png "Logs Docker")
+![1702841871677](README/1702841871677.png "Logs Docker")
 
 Abra pasta `src/` e execute o scrypt `resolucao_desafio.ipynb` (preencha  url e codigo com informacoes validas)
 
-![Tela Jupyter Notebook](image\README\1702850082562.png "Exec Run Cell")
+![Tela Jupyter Notebook](README/1702850082562.png "Exec Run Cell")
 
 
 ### 1 - PoC Web Scraping - EXTRAÇÃO E ORGANIZAÇÃO DE DADOS WEB
