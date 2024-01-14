@@ -7,15 +7,11 @@ services:
       - DEBUG=1
       - LOCALSTACK_HOSTNAME=localhost
       - TEST_AWS_ACCOUNT_ID=000000000000
-      - AWS_DEFAULT_REGION=us-west-2
+      - AWS_DEFAULT_REGION=us-west-1
       - DOCKER_HOST=unix:///var/run/docker.sock
       - DATA_DIR=/tmp/localstack/data
       - SERVICES=serverless,rds,sqs,sns,cloudformation
       - HOST_TMP_FOLDER=${TMPDIR}
-      - KINESIS_STREAM_SHARDS=1
-      - KINESIS_ERROR_PROBABILITY=0.0
-      - KINESIS_STREAM_NAME=kinesis-stream
-      - KINESIS_PROVIDER=kinesalite
     image: localstack/localstack:latest
     ports:
       - '53:53'
@@ -23,6 +19,6 @@ services:
       - '4510-4520:4510-4520'
       - '4566-4620:4566-4620'
     volumes:
-      - '${TMPDIR:}:/tmp/localstack'
-      - '/var/run/docker.sock:/var/run/docker.sock'
+      - ${TMPDIR:-}:/tmp/localstack
+      - /var/run/docker.sock:/var/run/docker.sock
 
