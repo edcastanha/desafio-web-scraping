@@ -1,7 +1,8 @@
 from django.urls import path
-from core.webScrappingTask.views import index
 
+from core.webScrappingTask.viewsets import WebScrapingViewSet
 
 urlpatterns = [
-    path('', index, name='index'),
+    path('v1/scrapping/', WebScrapingViewSet.as_view({'get': 'list', 'post': 'create'})),
+    path('v1/scrapping/<int:pk>/', WebScrapingViewSet.as_view({'get': 'retrieve', 'patch': 'partial_update'})),
 ]

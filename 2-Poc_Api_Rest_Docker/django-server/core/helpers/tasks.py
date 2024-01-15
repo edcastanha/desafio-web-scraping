@@ -7,8 +7,7 @@ from core.helpers.publisher import Publisher
 from django.core.serializers import serialize
 from django.utils import timezone
 
-# Objeto da classe Publisher
-publisher = Publisher(exchange='teste', queue_name='scrapping', routing_key='proccess')
+publisher = Publisher(exchange='teste', queue_name='scrapping', routing_key='api-django')
 
 def run_webScrappingTask(task_instance):
     """
@@ -21,8 +20,7 @@ def run_webScrappingTask(task_instance):
         inicio = timezone.now()
         logger.debug(f'<:: Tasks - run_webScrappingTask:: Data = {task_instance} as {inicio}')
 
-        # Publica a mensagem na fila RabbitMQ com a instância serializada usando o objeto da classe Publisher
-        publisher.publish_message(task_instance, 'proccess')  # Passa a instância serializada como mensagem
+        publisher.publish_message(task_instance, 'api-django')
         
         logger.debug(f'<:: Tasks - run_webScrappingTask:: Publisher Queue')
     except requests.exceptions.RequestException as e:

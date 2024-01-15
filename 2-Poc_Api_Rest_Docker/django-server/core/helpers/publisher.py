@@ -21,8 +21,6 @@ class Publisher:
 
         self.create_or_get_queue()
 
-        self.create_or_get_queue_success()
-
     def _establish_connection(self):
         """
         Estabelece a conexão com o servidor RabbitMQ.
@@ -61,32 +59,6 @@ class Publisher:
         except Exception as e:
             logger.error(f'Erro ao verificar/criar exchange e fila: {str(e)}')
             self.close()
-
-    def create_or_get_queue_success(self,):
-            """
-            Cria fila fixa para pos processamento das filas vindas dos models
-
-            Verifica se a fila especificada existe no RabbitMQ.
-            Caso não exista, a fila é criada.
-            """
-            try:
-                # Cria a exchange se não existir
-                self.channel.exchange_declare(exchange=self.exchange, exchange_type='direct')
-
-                # Cria a fila se não existir
-                self.channel.queue_declare(queue='processing', durable=True)
-
-                # Faz o bind da fila à exchange
-                self.channel.queue_bind(
-                    exchange=self.exchange,
-                    queue='processing',
-                    routing_key='update'
-                )
-                logger.info(f'Exchange e fila verificadas/criadas com sucesso')
-            except Exception as e:
-                error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
-                logger.error(f':: Publisher :: Exception: {error_message}')
-                self.close()
 
     def publish_message(self, message, routing_key):
         """
