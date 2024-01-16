@@ -76,6 +76,7 @@ class Publisher:
                 body=message,
                 properties=self.properties
             )
+            logger.info(f"<**_publish_message_**>  Mensagem Encaminhanda com sucesso!")
         except Exception as e:
             error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
             logger.error(f':: Publisher :: publish_message: {error_message}')

@@ -85,8 +85,6 @@ class ConsumerExtractor:
             if self.reconnect_attempts <= self.max_reconnect_attempts:
                 time.sleep(2)
         finally:
-            if self.db_connection.is_connected():
-                self.db_connection.close()
             logger.debug('<*_ConsumerExtractor_*> Run - Finally :')
 
     def process_message(self, ch, method, properties, body):
@@ -102,7 +100,6 @@ class ConsumerExtractor:
             url = data['url']
             code = data['codigo']
 
-            self.db_connection.connect()
             logger.info(f'<*_ConsumerExtractor_*> Process_Message - {data} tipo {type(data).__name__}')
             try:
                 task = Jobs(url, code)
