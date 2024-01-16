@@ -89,6 +89,10 @@ docker-compose up -d
 3. **ConSumer Jobs-Server:**
    * Script responsavel pelo processamento das tarefas cadastradas no sistema e  enfileirados no Broker. 
 
+
+![escopo](README/esboco.png "Esboço UML")
+
+
 Aqui está uma descrição detalhada de cada componente:
 
 1. Servidor Django:
@@ -113,7 +117,7 @@ Aqui está uma descrição detalhada de cada componente:
 Em Volumes/logs podemos acompanhar os processos via ferrametas de observabilidade capiturando ERROR  etc.
 
 
-***`<center>`! LEMBRETE ! `</center>`***
+*** ! LEMBRETE ! ***
 
  **execute para remover os volumes e imagens do docker:**
 
