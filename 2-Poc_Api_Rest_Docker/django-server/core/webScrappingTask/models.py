@@ -44,7 +44,7 @@ def task_pre_save(sender, instance, created, **kwargs):
     if created:
         logger.debug(f':: Models - task_pre_save:: created {type(instance).__name__}')
         try:
-            # Itera sobre os códigos de acesso e cria uma nova TaskProcessing para cada um
+            # Itera sobre os códigos de acesso e cria uma nova TaskProcessing
             for access_code in instance.codes:
                 task_processing = TaskProcessing.objects.create(
                     id_target=instance,
@@ -62,7 +62,7 @@ def task_pre_save(sender, instance, created, **kwargs):
                 logger.debug(f':: Models - task_pre_save:: DATA={serialized_instance}')
 
                 # Chama a função para executar a tarefa de web scraping passando a instância
-                run_webScrappingTask.delay(serialized_instance) 
+                run_webScrappingTask(serialized_instance) 
                 
         except Exception as e:
             error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
