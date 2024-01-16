@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+  
   # NGINX - Load balance / Proxy
   nginx-server:
       container_name: nginx-server
@@ -51,16 +52,16 @@ services:
     ports:
         - "6666:5432"
 
-  # Django - System Admin / API REST 
-  django-server:
+  # Django - System Admin / API REST / Celery
+  django-server: &common-settings
     build:
       context: django-server
       dockerfile: Dockerfile
     container_name: django-server
     command: gunicorn --timeout=3600 --bind=0.0.0.0:5005 core.wsgi:application
     depends_on:
-      - postgres-server
       - broker-server
+      - postgres-server
     env_file:
       - .envFile
     restart: always
@@ -75,11 +76,16 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
-          memory: 2048M  # Limite de memória para 2048M MB
+          cpus: '0.50'
+          memory: 2048M
         reservations:
-          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
-          memory: 512M  # Reserva mínima de memória para 512 MB
+          cpus: '0.25'
+          memory: 512M
+
+  django-server-task:
+    <<: *common-settings
+    container_name: django-server-task
+    command: celery -A core.settings worker -l info
 
   # Scripts para Jobs de Scrapping recebidos na Fila Scrapping
   jobs-server:
@@ -99,11 +105,11 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.50'  # Limite de CPU para 50% de um núcleo
-          memory: 1024M  # Limite de memória para 1024 MB
+          cpus: '0.50'
+          memory: 1024M
         reservations:
-          cpus: '0.25'  # Reserva mínima de CPU para 25% de um núcleo
-          memory: 256M  # Reserva mínima de memória para 256 MB
+          cpus: '0.25'
+          memory: 256M
     networks:
       - server-events
       - server-db-postgres
@@ -115,4 +121,3 @@ networks:
     driver: bridge
   server-events:
     driver: bridge
-

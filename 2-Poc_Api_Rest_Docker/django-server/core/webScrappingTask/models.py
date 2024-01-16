@@ -21,7 +21,7 @@ class TargetSiteData(BaseModel):
         ("E", "Error"),
     )
     target_url = models.URLField()
-    access_code = models.JSONField(blank=False)
+    codes = models.JSONField(blank=False)
     status_process = models.CharField(
         max_length=1, choices=CHOICE_STATUS, default="A"
     )
@@ -32,6 +32,7 @@ class TargetSiteData(BaseModel):
 
 class TaskProcessing(BaseModel):
     id_target = models.ForeignKey(TargetSiteData, on_delete=models.CASCADE)
+    access_code = models.IntegerField(blank=False)
     processing = models.BooleanField(default=False)
     
     def __str__(self):
@@ -40,20 +41,29 @@ class TaskProcessing(BaseModel):
 # Signal para executar uma tarefa após salvar uma nova instância de TargetSiteData
 @receiver(post_save, sender=TargetSiteData)
 def task_pre_save(sender, instance, created, **kwargs):
-
     if created:
         logger.debug(f':: Models - task_pre_save:: created {type(instance).__name__}')
         try:
-            # Serializa a instância para um formato JSON
-            serialized_instance = json.dumps({
-                "id": instance.pk,
-                "codigo": instance.access_code,
-                "url": instance.target_url
-            })
-            logger.debug(f':: Models - task_pre_save:: DATA={serialized_instance}')
-            # Chama a função para executar a tarefa de web scraping passando a instância
-            run_webScrappingTask.delay(serialized_instance) 
-            
+            # Itera sobre os códigos de acesso e cria uma nova TaskProcessing para cada um
+            for access_code in instance.codes:
+                task_processing = TaskProcessing.objects.create(
+                    id_target=instance,
+                    access_code=access_code,
+                    processing=False
+                )
+
+                # Serializa a instância para um formato JSON incluindo o código de acesso
+                serialized_instance = json.dumps({
+                    "id": instance.pk,
+                    "codigo": access_code,
+                    "url": instance.target_url,
+                    "task_id": task_processing.pk
+                })
+                logger.debug(f':: Models - task_pre_save:: DATA={serialized_instance}')
+
+                # Chama a função para executar a tarefa de web scraping passando a instância
+                run_webScrappingTask.delay(serialized_instance) 
+                
         except Exception as e:
             error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
             logger.error(f'<:: Models - task_pre_save:: Exception: {error_message}')

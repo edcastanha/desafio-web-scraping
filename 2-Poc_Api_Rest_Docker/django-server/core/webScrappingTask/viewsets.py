@@ -12,9 +12,17 @@ class WebScrapingViewSet(viewsets.ViewSet):
         return TargetSiteData.objects.all()
 
     def list(self, request):
-        items = self.get_queryset()
-        serializer = TargetSiteDataSerializer(items, many=True)
-        return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        try:
+            items = self.get_queryset()
+            serializer = TargetSiteDataSerializer(items, many=True)
+            
+            if not serializer.data:
+                return Response({'status': 'empty'}, status=status.HTTP_200_OK)
+
+            return Response({"status": "success", "data": serializer.data}, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'status': 'error', 'message': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
     def retrieve(self, request, pk=None):
         item = get_object_or_404(TargetSiteData, pk=pk)
