@@ -1,5 +1,3 @@
-import pika
-import json 
 import requests
 from django.conf import settings
 from core.helpers.loggingMe import logger
@@ -7,24 +5,21 @@ from core.helpers.publisher import Publisher
 from django.core.serializers import serialize
 from django.utils import timezone
 
-# Objeto da classe Publisher
-publisher = Publisher(exchange='teste', queue_name='scrapping', routing_key='proccess')
+publisher = Publisher(exchange='teste', queue_name='scrapping', routing_key='api-django')
 
 def run_webScrappingTask(task_instance):
     """
-    Tarefa envia a instância InformacaoAlvo para a fila.
+        Tarefa envia a instância InformacaoAlvo para a fila.
 
     Args:
-    - task_instance: Instância da Tarefa associada à InformacaoAlvo.
+    - task_instance: Instância da Tarefa associada à Informacao do Alvo.
     """
     try:
         inicio = timezone.now()
         logger.debug(f'<:: Tasks - run_webScrappingTask:: Data = {task_instance} as {inicio}')
+        # Adicione um log para verificar se a mensagem foi publicada com sucesso
+        result = publisher.publish_message(task_instance, 'api-django')
 
-        # Publica a mensagem na fila RabbitMQ com a instância serializada usando o objeto da classe Publisher
-        publisher.publish_message(task_instance, 'proccess')  # Passa a instância serializada como mensagem
-        
-        logger.debug(f'<:: Tasks - run_webScrappingTask:: Publisher Queue')
     except requests.exceptions.RequestException as e:
         error_message = f"Uma exceção do tipo {type(e).__name__} ocorreu com a mensagem: {str(e)}"
         logger.error(f'<:: Tasks - run_webScrappingTask:: Exception: {error_message}')

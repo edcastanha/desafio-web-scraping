@@ -1,0 +1,81 @@
+{
+    "client": "Thunder Client",
+    "collectionName": "API Web Scrapping",
+    "dateExported": "2024-01-14T23:07:04.174Z",
+    "version": "1.1",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "3b59661e-d74f-4ae8-9861-d3e0515ba8bc",
+            "colId": "276bcd68-88db-4421-b1b6-35448aac8d85",
+            "containerId": "",
+            "name": "GET :: Target Site Data - ID",
+            "url": "http://localhost:7000/api/v1/scrapping/3",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-01-14T21:42:34.890Z",
+            "modified": "2024-01-14T23:06:30.438Z",
+            "headers": [
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [],
+            "tests": []
+        },
+        {
+            "_id": "54f59419-1779-4c46-b3ec-6ced93f0c079",
+            "colId": "276bcd68-88db-4421-b1b6-35448aac8d85",
+            "containerId": "",
+            "name": "POST - Create Target Site Date - Auth",
+            "url": "http://localhost:7000/api/v1/scrapping/",
+            "method": "POST",
+            "sortNum": 40000,
+            "created": "2024-01-14T22:59:24.380Z",
+            "modified": "2024-01-14T23:05:37.854Z",
+            "headers": [
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n    \"target_url\": \"https://test.com\",\n    \"access_code\": [\"111333\", \"111\"]\n}\n",
+                "form": []
+            },
+            "auth": {
+                "type": "basic",
+                "basic": {
+                    "username": "admin",
+                    "password": "admin"
+                }
+            },
+            "tests": []
+        },
+        {
+            "_id": "ec62d4bf-1fa4-4e24-9fc4-184d2a39d73f",
+            "colId": "276bcd68-88db-4421-b1b6-35448aac8d85",
+            "containerId": "",
+            "name": "GET - Target Site Date - All",
+            "url": "http://localhost:7000/api/v1/scrapping/",
+            "method": "GET",
+            "sortNum": 50000,
+            "created": "2024-01-14T23:01:30.980Z",
+            "modified": "2024-01-14T23:04:00.728Z",
+            "headers": [
+                {
+                    "name": "User-Agent",
+                    "value": "Thunder Client (https://www.thunderclient.com)",
+                    "isDisabled": true
+                }
+            ],
+            "params": [],
+            "tests": []
+        }
+    ]
+}

@@ -3,7 +3,7 @@ import requests
 from urllib.parse import urlparse
 from datetime import datetime
 from .custom_parser import CustomHTMLParser
-from .logging_me import logger  # Importa o módulo logger
+from .logging_me import logger
 
 class Jobs:
     '''
@@ -37,7 +37,7 @@ class Jobs:
         # Obtém o token CSRF da página
         try:
             response = self.session.get(self.url, headers=self.headers)
-            self.check_status_code(response)  # Verifica o status da resposta HTTP
+            self.check_status_code(response)
             
             parser = CustomHTMLParser(self.codigo)
             parser.feed(response.text)

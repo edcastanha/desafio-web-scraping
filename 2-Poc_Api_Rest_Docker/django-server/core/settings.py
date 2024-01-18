@@ -1,5 +1,7 @@
 from pathlib import Path
 import os
+from core.helpers.celery_config import *
+from kombu import Queue, Exchange
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,11 +50,19 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     # Libs
-    'django_extensions',
-
+    'rest_framework',
+    'django_celery_results',
     # Apps
     'core.webScrappingTask.apps.WebscrappingtaskConfig'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -75,7 +85,7 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates/')],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -146,3 +156,29 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+#CELERY SETTINGS
+CELERY_TIMEZONE = 'America/Sao_Paulo'
+CELERY_BROKER_URL = BROKER_URL
+CELERY_RESULT_BACKEND = 'django-db://'
+
+
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_DISABLE_RATE_LIMITS = True
+CELERY_TASK_RESULT_EXPIRES = 60 * 60 * 24  # 1 dia
+
+CELERY_TASK_ROUTES = {
+    'core.helpers.tasks.*': {'queue': 'core'},
+}
+CELERY_QUEUES = (
+    Queue('core', Exchange('core'), routing_key='core'),
+)
+
+# Inicialização do Celery
+app = Celery('core')
+app.config_from_object('django.conf:settings', namespace='CELERY')
+
+# Descoberta automática de tarefas em aplicativos Django
+app.autodiscover_tasks()
