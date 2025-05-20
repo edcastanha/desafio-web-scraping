@@ -23,7 +23,7 @@ class CustomHTMLParser(HTMLParser):
         super().__init__()
         self.links = []
         self.codigo = codigo
-        self.title_code = None
+        self.title_code = str(self.codigo)
         self.title_file = None
         self.in_div = False
         self.current_tag = None
@@ -43,6 +43,7 @@ class CustomHTMLParser(HTMLParser):
         elif tag == 'div':
             self.in_div = True
             self.current_tag = 'div'
+        # The following logic for link extraction is dependent on specific HTML structure (e.g., link being within a div as handled by self.in_div) and may need adjustment.
         elif tag == 'a' and self.in_div:
             self.current_tag = 'a'
             self.in_div = False
@@ -58,8 +59,7 @@ class CustomHTMLParser(HTMLParser):
 
     def handle_data(self, data):
         # Captura e limpa os dados dentro das tags div
-        if self.current_tag == 'div' and self.old_tag == 'head' and data.strip() != "":
-            self.title_code = data.strip()
+        # The following logic for extracting title_file is highly dependent on specific HTML structure and may need adjustment for the target site.
         if self.current_tag == 'div' and self.old_tag == 'div' and self.in_div and data.strip() != "":
             self.title_file = data.strip()
 

@@ -1,6 +1,6 @@
 import os
 import requests
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urljoin
 from datetime import datetime
 from .custom_parser import CustomHTMLParser
 from .logging_me import logger
@@ -72,11 +72,10 @@ class Jobs:
             
             for code, folder, link in links:
                 # Verifica divergências entre o código de acesso e os arquivos
-                if not code.isdigit() and int(code) != self.codigo:
+                if not (code.isdigit() and int(code) == int(str(self.codigo))):
                     raise Exception("Divergências no CÓDIGO de acesso e Arquivos")
 
-                parsed_url = urlparse(self.url)
-                file_url = f"{parsed_url.scheme}://{parsed_url.netloc}/{parsed_url.path}/{link}"
+                file_url = urljoin(self.url, link)
                 file_name = os.path.basename(link)
 
                 current_date = datetime.now().strftime('%Y-%m-%d')
@@ -85,7 +84,7 @@ class Jobs:
                 file_path = os.path.join(folder_path, file_name)
 
                 response_file = self.session.get(file_url, headers=self.headers)
-                self.check_status_code(response)  # Verifica o status da resposta HTTP
+                self.check_status_code(response_file)  # Verifica o status da resposta HTTP
                 
                 if not os.path.exists(file_path):
                     os.makedirs(folder_path, exist_ok=True)
